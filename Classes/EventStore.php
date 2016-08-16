@@ -8,11 +8,11 @@ namespace Flowpack\EventStore;
  */
 
 use Flowpack\Cqrs\Event\EventInterface;
-use Flowpack\EventStore\EventSerializer\EventSerializerInterface;
 use Flowpack\EventStore\Exception\ConcurrencyException;
 use Flowpack\EventStore\Exception\EventStreamNotFoundException;
 use Flowpack\EventStore\Storage\EventStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMapper;
 
 /**
  * EventStore
@@ -26,10 +26,10 @@ class EventStore implements EventStoreInterface
     protected $storage;
 
     /**
-     * @var EventSerializerInterface
+     * @var PropertyMapper
      * @Flow\Inject
      */
-    protected $serializer;
+    protected $propertyMapper;
 
     /**
      * Get events for AR
@@ -49,7 +49,7 @@ class EventStore implements EventStoreInterface
         $events = [];
 
         foreach ($streamData->getData() as $eventData) {
-            $events[] = $this->serializer->deserialize($eventData);
+            $events[] = $this->propertyMapper->convert($eventData, EventInterface::class);
         }
 
         return new EventStream(
@@ -84,7 +84,7 @@ class EventStore implements EventStoreInterface
 
         /** @var EventInterface $event */
         foreach ($newEvents as $event) {
-            $eventData[] = $this->serializer->serialize($event);
+            $eventData[] = $this->propertyMapper->convert($event, 'array');
         }
 
         $currentStoredVersion = $this->storage->getCurrentVersion($aggregateIdentifier);
