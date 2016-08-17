@@ -14,28 +14,36 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class EventStreamData
 {
-    /** @var string Aggregate Root ID */
+    /**
+     * @var string
+     */
     protected $aggregateIdentifier;
 
-    /** @var string Aggregate Root name */
-    protected $name;
+    /**
+     * @var string
+     */
+    protected $aggregateName;
 
-    /** @var int */
+    /**
+     * @var integer
+     */
     protected $version;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $data;
 
     /**
      * @param string $aggregateIdentifier
-     * @param string $name
+     * @param string $aggregateName
      * @param array $data
      * @param integer $version
      */
-    public function __construct(string $aggregateIdentifier, string $name, array $data, int $version)
+    public function __construct(string $aggregateIdentifier, string $aggregateName, array $data, int $version)
     {
         $this->aggregateIdentifier = $aggregateIdentifier;
-        $this->name = $name;
+        $this->aggregateName = $aggregateName;
         $this->version = $version;
         $this->data = $data;
     }
@@ -51,9 +59,9 @@ class EventStreamData
     /**
      * @return string
      */
-    public function getName(): string
+    public function getAggregateName(): string
     {
-        return $this->name;
+        return $this->aggregateName;
     }
 
     /**
