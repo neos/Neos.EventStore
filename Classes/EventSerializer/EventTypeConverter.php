@@ -7,6 +7,7 @@ namespace Flowpack\EventStore\EventSerializer;
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
+use Flowpack\Cqrs\Domain\Timestamp;
 use Flowpack\Cqrs\Event\EventInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -50,7 +51,7 @@ class EventTypeConverter extends AbstractTypeConverter
             if ($value instanceof \DateTime) {
                 $value = [
                     '_php_class' => \DateTime::class,
-                    '_value' => $value->format(\DateTime::ISO8601)
+                    '_value' => $value->format(Timestamp::OUTPUT_FORMAT)
                 ];
             }
         }
@@ -59,7 +60,7 @@ class EventTypeConverter extends AbstractTypeConverter
             'class' => get_class($source),
             'aggregate_identifier' => $source->getAggregateIdentifier(),
             'name' => $source->getName(),
-            'timestamp' => $source->getTimestamp()->format(\DateTime::ISO8601),
+            'timestamp' => $source->getTimestamp()->format(Timestamp::OUTPUT_FORMAT),
             'payload' => $payload
         ];
 
