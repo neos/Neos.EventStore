@@ -15,11 +15,16 @@ use TYPO3\Flow\Annotations as Flow;
 interface EventStoreInterface
 {
     /**
-     * Get events for AR
      * @param  string $identifier
      * @return EventStream Can be empty stream
      */
     public function get(string $identifier): EventStream;
+
+    /**
+     * @param  string $identifier
+     * @return boolean
+     */
+    public function contains(string $identifier): bool;
 
     /**
      * Persist new AR events

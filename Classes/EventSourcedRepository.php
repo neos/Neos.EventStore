@@ -12,6 +12,7 @@ use Flowpack\Cqrs\Domain\Exception\AggregateRootNotFoundException;
 use Flowpack\Cqrs\Domain\RepositoryInterface;
 use Flowpack\Cqrs\Event\EventBusInterface;
 use Flowpack\Cqrs\Event\EventInterface;
+use Flowpack\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Flowpack\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -50,7 +51,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
 
         $reflection = new \ReflectionClass($eventStream->getAggregateName());
 
-        /** @var AggregateRootInterface $aggregateRoot */
+        /** @var EventSourcedAggregateRootInterface $aggregateRoot */
         $aggregateRoot = $reflection->newInstanceWithoutConstructor();
         $aggregateRoot->reconstituteFromEventStream($eventStream);
 
@@ -84,5 +85,14 @@ abstract class EventSourcedRepository implements RepositoryInterface
         foreach ($uncommitedEvents as $event) {
             $this->eventBus->handle($event);
         }
+    }
+
+    /**
+     * @param string $identifier
+     * @return boolean
+     */
+    public function contains($identifier): bool
+    {
+        return $this->eventStore->contains($identifier);
     }
 }

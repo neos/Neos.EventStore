@@ -101,4 +101,13 @@ class EventStore implements EventStoreInterface
 
         return;
     }
+
+    /**
+     * @param string $identifier
+     * @return bool
+     */
+    public function contains(string $identifier): bool
+    {
+        return $this->storage->contains($identifier);
+    }
 }
