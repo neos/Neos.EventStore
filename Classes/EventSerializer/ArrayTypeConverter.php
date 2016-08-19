@@ -52,7 +52,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
             'class',
             'aggregate_identifier',
             'name',
-            'timestamp',
+            'created_at',
             'payload'
         ];
 
@@ -69,7 +69,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
         }
 
         /** @var EventInterface $event */
-        $metaData = new MessageMetadata($source['name'], new \DateTime($source['timestamp']));
+        $metaData = new MessageMetadata($source['name'], new \DateTime($source['created_at']));
         $event = $this->objectManager->get($source['class'], $source['payload'], $metaData);
 
         $event->setAggregateIdentifier($source['aggregate_identifier']);

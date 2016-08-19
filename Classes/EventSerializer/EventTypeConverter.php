@@ -60,7 +60,7 @@ class EventTypeConverter extends AbstractTypeConverter
             'class' => get_class($source),
             'aggregate_identifier' => $source->getAggregateIdentifier(),
             'name' => $source->getName(),
-            'timestamp' => $source->getTimestamp()->format(Timestamp::OUTPUT_FORMAT),
+            'created_at' => $source->getTimestamp()->format(Timestamp::OUTPUT_FORMAT),
             'payload' => $payload
         ];
 
