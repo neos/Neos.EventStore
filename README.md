@@ -18,8 +18,8 @@ The goal of the project is to provide infrastructure to support ES (Event Sourci
 
 Check external packages:
 
-* [x] **Flowpack.EventStore.InMemoryStorageAdapter**: simple testing implementation with not persistence only memory based
-* [ ] **Flowpack.EventStore.DatabaseStorageAdapter**: Doctrine DBAL implementation
+* [x] **Ttree.EventStore.InMemoryStorageAdapter**: simple testing implementation with not persistence only memory based
+* [ ] **Ttree.EventStore.DatabaseStorageAdapter**: Doctrine DBAL implementation
 
 Acknowledgments
 ---------------

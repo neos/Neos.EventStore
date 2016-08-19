@@ -1,19 +1,19 @@
 <?php
-namespace Flowpack\EventStore;
+namespace Ttree\EventStore;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Domain\AggregateRootInterface;
-use Flowpack\Cqrs\Domain\Exception\AggregateRootNotFoundException;
-use Flowpack\Cqrs\Domain\RepositoryInterface;
-use Flowpack\Cqrs\Event\EventBusInterface;
-use Flowpack\Cqrs\Event\EventInterface;
-use Flowpack\EventStore\Domain\EventSourcedAggregateRootInterface;
-use Flowpack\EventStore\Exception\EventStreamNotFoundException;
+use Ttree\Cqrs\Domain\AggregateRootInterface;
+use Ttree\Cqrs\Domain\Exception\AggregateRootNotFoundException;
+use Ttree\Cqrs\Domain\RepositoryInterface;
+use Ttree\Cqrs\Event\EventBusInterface;
+use Ttree\Cqrs\Event\EventInterface;
+use Ttree\EventStore\Domain\EventSourcedAggregateRootInterface;
+use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 
 /**

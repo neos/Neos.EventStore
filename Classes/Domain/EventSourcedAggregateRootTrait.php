@@ -1,18 +1,17 @@
 <?php
-namespace Flowpack\EventStore\Domain;
+namespace Ttree\EventStore\Domain;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Domain\AggregateRootTrait;
-use Flowpack\Cqrs\Event\EventInterface;
-use Flowpack\EventStore\EventStream;
-use Flowpack\Cqrs\RuntimeException;
+use Ttree\Cqrs\Domain\AggregateRootTrait;
+use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\RuntimeException;
+use Ttree\EventStore\EventStream;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
 
 /**
  * AggregateRootTrait

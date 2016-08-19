@@ -1,16 +1,16 @@
 <?php
-namespace Flowpack\EventStore;
+namespace Ttree\EventStore;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Event\EventInterface;
-use Flowpack\EventStore\Exception\ConcurrencyException;
-use Flowpack\EventStore\Exception\EventStreamNotFoundException;
-use Flowpack\EventStore\Storage\EventStorageInterface;
+use Ttree\Cqrs\Event\EventInterface;
+use Ttree\EventStore\Exception\ConcurrencyException;
+use Ttree\EventStore\Exception\EventStreamNotFoundException;
+use Ttree\EventStore\Storage\EventStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMapper;
 

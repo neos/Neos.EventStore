@@ -1,13 +1,13 @@
 <?php
-namespace Flowpack\EventStore;
+namespace Ttree\EventStore;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Event\EventInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -125,10 +125,12 @@ class EventStream implements \IteratorAggregate
 
     /**
      * Retrieve an external iterator
-     * @return \ArrayIterator
+     * @return \Generator
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->events);
+        foreach ($this->events as $event) {
+            yield $event;
+        }
     }
 }

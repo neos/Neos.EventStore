@@ -1,19 +1,19 @@
 {
     "description": "",
     "type": "neos-package",
-    "name": "flowpack/eventstore",
+    "name": "ttree/eventstore",
     "require": {
         "typo3/flow": "*",
-        "flowpack/cqrs": "*"
+        "ttree/cqrs": "*"
     },
     "autoload": {
         "psr-4": {
-            "Flowpack\\EventStore\\": "Classes/"
+            "Ttree\\EventStore\\": "Classes/"
         }
     },
     "extra": {
         "neos": {
-            "package-key": "Flowpack.EventStore"
+            "package-key": "Ttree.EventStore"
         }
     }
 }

@@ -1,15 +1,15 @@
 <?php
-namespace Flowpack\EventStore\EventSerializer;
+namespace Ttree\EventStore\EventSerializer;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Event\EventInterface;
-use Flowpack\Cqrs\Message\MessageMetadata;
-use Flowpack\EventStore\Exception\EventSerializerException;
+use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Message\MessageMetadata;
+use Ttree\EventStore\Exception\EventSerializerException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Object\ObjectManagerInterface;

@@ -1,14 +1,14 @@
 <?php
-namespace Flowpack\EventStore\EventSerializer;
+namespace Ttree\EventStore\EventSerializer;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\Cqrs\Domain\Timestamp;
-use Flowpack\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Domain\Timestamp;
+use Ttree\Cqrs\Event\EventInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;

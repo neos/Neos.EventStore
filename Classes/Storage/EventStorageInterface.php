@@ -1,13 +1,13 @@
 <?php
-namespace Flowpack\EventStore\Storage;
+namespace Ttree\EventStore\Storage;
 
 /*
- * This file is part of the Flowpack.Cqrs package.
+ * This file is part of the Ttree.Cqrs package.
  *
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Flowpack\EventStore\EventStreamData;
+use Ttree\EventStore\EventStreamData;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
