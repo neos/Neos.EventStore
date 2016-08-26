@@ -25,6 +25,12 @@ interface ConcurrencyConflictResolverInterface
     public function conflictWith(string $eventType, array $previousEventTypes): bool;
 
     /**
+     * Return the error message from the last call of conflictWith method
+     * @return array
+     */
+    public function getLastMessages(): array;
+
+    /**
      * Register conflicting events
      *
      * The value of $conflictsWith is an associative array, the keys are the event type and

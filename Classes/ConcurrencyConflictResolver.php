@@ -7,7 +7,7 @@ namespace Ttree\EventStore;
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Ttree\Cqrs\Event\ConflictAwareEventInterface;
+use Ttree\EventStore\Event\ConflictAwareEventInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -30,6 +30,11 @@ class ConcurrencyConflictResolver implements ConcurrencyConflictResolverInterfac
      * @Flow\Inject
      */
     protected $objectManager;
+
+    /**
+     * @var array
+     */
+    protected $lastMessages = [];
 
     /**
      * Populate the registry
@@ -60,7 +65,21 @@ class ConcurrencyConflictResolver implements ConcurrencyConflictResolverInterfac
         }
 
         $conflictingEvents = array_intersect($previousEventTypes, self::$registry[$eventType]['eventTypes']);
+
+        $this->lastMessages = [];
+        array_map(function ($eventType) {
+            $this->lastMessages[$eventType] = self::$registry[$eventType]['messageMapping'];
+        }, $conflictingEvents);
+
         return count($conflictingEvents) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLastMessages(): array
+    {
+        return $this->lastMessages;
     }
 
     /**
@@ -79,7 +98,7 @@ class ConcurrencyConflictResolver implements ConcurrencyConflictResolverInterfac
         self::$registry[$eventType] = [
             'eventTypes' => $eventTypes,
             'hasConflictingEvents' => count($eventTypes) > 0,
-            'messageMapping' => $conflictsWith
+            'messageMapping' => isset ($conflictsWith[$eventType]) ? $conflictsWith[$eventType] : null
         ];
     }
 
