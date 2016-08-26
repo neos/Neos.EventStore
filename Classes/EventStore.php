@@ -26,6 +26,12 @@ class EventStore implements EventStoreInterface
     protected $storage;
 
     /**
+     * @var ConcurrencyConflictResolverInterface
+     * @Flow\Inject
+     */
+    protected $conflictResolver;
+
+    /**
      * @var PropertyMapper
      * @Flow\Inject
      */
