@@ -17,7 +17,7 @@ use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * EventSerializer
+ * EventSourcedRepository
  */
 abstract class EventSourcedRepository implements RepositoryInterface
 {
