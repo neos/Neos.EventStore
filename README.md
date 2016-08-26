@@ -46,8 +46,8 @@ the store will solve the version concurrency issue automatically.
 
 Check external packages:
 
-* [x] **Ttree.EventStore.InMemoryStorageAdapter**: simple testing implementation with not persistence only memory based
-* [ ] **Ttree.EventStore.DatabaseStorageAdapter**: Doctrine DBAL implementation
+* [x] **[Ttree.EventStore.InMemoryStorageAdapter](https://github.com/dfeyer/Ttree.EventStore.InMemoryStorageAdapter)**: simple testing implementation with not persistence only memory based
+* [x] **[Ttree.EventStore.DatabaseStorageAdapter](https://github.com/dfeyer/Ttree.EventStore.DatabaseStorageAdapter)**: Doctrine DBAL implementation
 
 Acknowledgments
 ---------------
