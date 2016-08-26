@@ -50,14 +50,14 @@ class EventTypeConverter extends AbstractTypeConverter
         foreach ($payload as $key => &$value) {
             if ($value instanceof \DateTime) {
                 $value = [
-                    '_php_class' => \DateTime::class,
-                    '_value' => $value->format(Timestamp::OUTPUT_FORMAT)
+                    'type' => \DateTime::class,
+                    'value' => $value->format(Timestamp::OUTPUT_FORMAT)
                 ];
             }
         }
 
         $data = [
-            'class' => get_class($source),
+            'type' => get_class($source),
             'aggregate_identifier' => $source->getAggregateIdentifier(),
             'name' => $source->getName(),
             'created_at' => $source->getTimestamp()->format(Timestamp::OUTPUT_FORMAT),

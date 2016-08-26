@@ -27,6 +27,17 @@ class ArrayTypeConverter extends AbstractTypeConverter
     protected $sourceTypes = ['array'];
 
     /**
+     * @var array
+     */
+    protected static $schema = [
+        'type',
+        'aggregate_identifier',
+        'name',
+        'created_at',
+        'payload'
+    ];
+
+    /**
      * @var string
      */
     protected $targetType = EventInterface::class;
@@ -48,29 +59,21 @@ class ArrayTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $schema = [
-            'class',
-            'aggregate_identifier',
-            'name',
-            'created_at',
-            'payload'
-        ];
-
-        if (count(array_intersect_key($schema, array_keys($source))) !== count($schema)) {
+        if (count(array_intersect_key(self::$schema, array_keys($source))) !== count(self::$schema)) {
             throw new EventSerializerException('No event class specified or invalid entry');
         }
 
         $payload = $source['payload'];
         foreach ($payload as $key => &$value) {
-            if (!is_array($value) || !array_key_exists('_php_class', $value)) {
+            if (!is_array($value) || !array_key_exists('type', $value)) {
                 continue;
             }
-            $value = $this->objectManager->get($value['_php_class'], $value['_value']);
+            $value = $this->objectManager->get($value['type'], $value['value']);
         }
 
         /** @var EventInterface $event */
         $metaData = new MessageMetadata($source['name'], new \DateTime($source['created_at']));
-        $event = $this->objectManager->get($source['class'], $source['payload'], $metaData);
+        $event = $this->objectManager->get($source['type'], $source['payload'], $metaData);
 
         $event->setAggregateIdentifier($source['aggregate_identifier']);
 
