@@ -8,7 +8,6 @@ namespace Ttree\EventStore\Storage;
  */
 
 use Ttree\EventStore\EventStreamData;
-use TYPO3\Flow\Annotations as Flow;
 
 /**
  * EventStorageInterface
@@ -23,12 +22,13 @@ interface EventStorageInterface
 
     /**
      * @param string $identifier
+     * @param string $aggregateIdentifier
      * @param string $aggregateName
      * @param array $data
      * @param integer $version
      * @return void
      */
-    public function commit(string $identifier, string $aggregateName, array $data, int $version);
+    public function commit(string $identifier, string $aggregateIdentifier, string $aggregateName, array $data, int $version);
 
     /**
      * @param string $identifier
