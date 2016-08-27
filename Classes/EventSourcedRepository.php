@@ -72,8 +72,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
             $stream = new EventStream(
                 $aggregate->getAggregateIdentifier(),
                 get_class($aggregate),
-                [],
-                1
+                []
             );
         } finally {
             $uncommitedEvents = $aggregate->pullUncommittedEvents();

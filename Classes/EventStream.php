@@ -52,13 +52,12 @@ class EventStream implements \IteratorAggregate
      * @param EventInterface[] $events
      * @param integer $version
      */
-    public function __construct(string $aggregateIdentifier, string $aggregateName, array $events, int $version = null)
+    public function __construct(string $aggregateIdentifier, string $aggregateName, array $events, int $version = 0)
     {
         $this->identifier = Algorithms::generateUUID();
         $this->aggregateIdentifier = $aggregateIdentifier;
         $this->aggregateName = $aggregateName;
         $this->events = $events;
-        $this->version = $version ?: 1;
     }
 
     /**
