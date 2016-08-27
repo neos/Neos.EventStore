@@ -8,10 +8,10 @@ namespace Ttree\EventStore\Event;
  */
 
 use Ttree\Cqrs\Event\EventInterface;
-use Ttree\EventStore\Exception\EventSerializerException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Zumba\JsonSerializer\JsonSerializer;
@@ -24,7 +24,7 @@ class EventTypeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['array'];
+    protected $sourceTypes = ['array', 'string'];
 
     /**
      * @var string
@@ -38,17 +38,23 @@ class EventTypeConverter extends AbstractTypeConverter
     protected $objectManager;
 
     /**
-     * @param array $source
+     * @param array|string $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
-     * @throws EventSerializerException
+     * @throws TypeConverterException
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $serializer = new JsonSerializer();
+        if (is_string($source)) {
+            $source = json_decode($source, true);
+            if ($source === null) {
+                throw new TypeConverterException('Unable to decode JSON string', 1472297993);
+            }
+        }
         return $serializer->unserialize(json_encode($source));
     }
 }
