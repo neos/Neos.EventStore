@@ -4,7 +4,8 @@
     "name": "ttree/eventstore",
     "require": {
         "typo3/flow": "*",
-        "ttree/cqrs": "*"
+        "ttree/cqrs": "*",
+        "zumba/json-serializer": "^2.1"
     },
     "autoload": {
         "psr-4": {

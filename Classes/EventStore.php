@@ -13,6 +13,7 @@ use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use Ttree\EventStore\Storage\EventStorageInterface;
 use Ttree\EventStore\Storage\PreviousEventsInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Utility\Algorithms;
 
@@ -40,6 +41,12 @@ class EventStore implements EventStoreInterface
     protected $propertyMapper;
 
     /**
+     * @var SystemLoggerInterface
+     * @Flow\Inject
+     */
+    protected $logger;
+
+    /**
      * Get events for AR
      * @param  string $identifier
      * @return EventStream Can be empty stream
@@ -54,16 +61,10 @@ class EventStore implements EventStoreInterface
             throw new EventStreamNotFoundException();
         }
 
-        $events = [];
-
-        foreach ($streamData->getData() as $eventData) {
-            $events[] = $this->propertyMapper->convert($eventData, EventInterface::class);
-        }
-
         return new EventStream(
             $streamData->getAggregateIdentifier(),
             $streamData->getAggregateName(),
-            $events,
+            $streamData->getData(),
             $streamData->getVersion()
         );
     }
@@ -81,32 +82,25 @@ class EventStore implements EventStoreInterface
             return;
         }
 
-        $commitIdentifier = Algorithms::generateUUID();
+        $streamIdentifier = $stream->getIdentifier();
         $aggregateIdentifier = $stream->getAggregateIdentifier();
         $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
-        $eventData = $this->convertToEventDataArray($newEvents);
+        $nextVersion = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
 
-        $nextVersion = $this->nextVersion($aggregateIdentifier, $currentVersion, $eventData);
-
-        $this->storage->commit($commitIdentifier, $aggregateIdentifier, $aggregateName, $eventData, $nextVersion);
+        $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $nextVersion);
 
         $stream->markAllApplied($nextVersion);
     }
 
     /**
-     * @param array $newEvents
-     * @return array
-     */
-    protected function convertToEventDataArray(array $newEvents): array
-    {
-        return array_map(function (EventInterface $event) {
-            return $this->propertyMapper->convert($event, 'array');
-        }, $newEvents);
-    }
-
-    /**
+     * Generate the next version for the current commit
+     *
+     * By default the next version is the current version + the number of new events,
+     * if we detect conflict an exception is throwned the clear message to help the
+     * user in the resolution of the message.
+     *
      * @param string $aggregateIdentifier
      * @param integer $currentVersion
      * @param array $eventData
@@ -150,7 +144,7 @@ class EventStore implements EventStoreInterface
             );
             throw $exception;
         }
-
+        $this->logger->log('Aggregate root versions mismatch, but solved automatically for you', LOG_NOTICE);
         return $this->storage->getCurrentVersion($aggregateIdentifier) + $eventCounter;
     }
 

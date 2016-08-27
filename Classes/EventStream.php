@@ -9,12 +9,18 @@ namespace Ttree\EventStore;
 
 use Ttree\Cqrs\Event\EventInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * EventStream
  */
 class EventStream implements \IteratorAggregate
 {
+    /**
+     * @var string
+     */
+    protected $identifier;
+
     /**
      * @var string
      */
@@ -41,18 +47,26 @@ class EventStream implements \IteratorAggregate
     protected $version;
 
     /**
-     * EventStream constructor
-     * @param string $identifier
-     * @param $aggregateName
+     * @param string $aggregateIdentifier
+     * @param string $aggregateName
      * @param EventInterface[] $events
      * @param integer $version
      */
-    public function __construct(string $identifier, string $aggregateName, array $events = [], int $version = null)
+    public function __construct(string $aggregateIdentifier, string $aggregateName, array $events, int $version = null)
     {
-        $this->aggregateIdentifier = $identifier;
+        $this->identifier = Algorithms::generateUUID();
+        $this->aggregateIdentifier = $aggregateIdentifier;
         $this->aggregateName = $aggregateName;
         $this->events = $events;
         $this->version = $version ?: 1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
     }
 
     /**
@@ -72,7 +86,7 @@ class EventStream implements \IteratorAggregate
     }
 
     /**
-     * @return EventInterface[]
+     * @return array
      */
     public function getEvents()
     {

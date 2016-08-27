@@ -49,6 +49,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
             ), 1471077948);
         }
 
+        // todo don't use the reflexion directly
         $reflection = new \ReflectionClass($eventStream->getAggregateName());
 
         /** @var EventSourcedAggregateRootInterface $aggregateRoot */

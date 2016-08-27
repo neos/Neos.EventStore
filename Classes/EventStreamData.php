@@ -73,12 +73,10 @@ class EventStreamData
     }
 
     /**
-     * @return \Generator
+     * @return array
      */
-    public function getData(): \Generator
+    public function getData(): array
     {
-        foreach ($this->data as $event) {
-            yield $event;
-        }
+        return $this->data;
     }
 }
