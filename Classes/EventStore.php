@@ -7,15 +7,12 @@ namespace Ttree\EventStore;
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Ttree\Cqrs\Event\EventInterface;
 use Ttree\EventStore\Exception\ConcurrencyException;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use Ttree\EventStore\Storage\EventStorageInterface;
 use Ttree\EventStore\Storage\PreviousEventsInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * EventStore
@@ -33,12 +30,6 @@ class EventStore implements EventStoreInterface
      * @Flow\Inject
      */
     protected $conflictResolver;
-
-    /**
-     * @var PropertyMapper
-     * @Flow\Inject
-     */
-    protected $propertyMapper;
 
     /**
      * @var SystemLoggerInterface
