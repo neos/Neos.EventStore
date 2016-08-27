@@ -21,14 +21,14 @@ interface EventStorageInterface
     public function load(string $identifier);
 
     /**
-     * @param string $identifier
+     * @param string $streamIdentifier
      * @param string $aggregateIdentifier
      * @param string $aggregateName
      * @param array $data
      * @param integer $version
      * @return void
      */
-    public function commit(string $identifier, string $aggregateIdentifier, string $aggregateName, array $data, int $version);
+    public function commit(string $streamIdentifier, string $aggregateIdentifier, string $aggregateName, array $data, int $version);
 
     /**
      * @param string $identifier
