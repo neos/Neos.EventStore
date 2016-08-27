@@ -9,6 +9,7 @@ namespace Ttree\EventStore\Storage;
 
 use Ttree\EventStore\EventStreamData;
 use Ttree\EventStore\Exception\ConcurrencyException;
+use Ttree\EventStore\Exception\StorageConcurrencyException;
 
 /**
  * EventStorageInterface
@@ -28,7 +29,7 @@ interface EventStorageInterface
      * @param array $data
      * @param integer $version
      * @return void
-     * @throws ConcurrencyException
+     * @throws StorageConcurrencyException
      */
     public function commit(string $streamIdentifier, string $aggregateIdentifier, string $aggregateName, array $data, int $version);
 

@@ -10,6 +10,7 @@ namespace Ttree\EventStore;
 use Ttree\Cqrs\Event\EventInterface;
 use Ttree\EventStore\Exception\ConcurrencyException;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
+use Ttree\EventStore\Exception\StorageConcurrencyException;
 use Ttree\EventStore\Storage\EventStorageInterface;
 use Ttree\EventStore\Storage\PreviousEventsInterface;
 use TYPO3\Flow\Annotations as Flow;
@@ -79,11 +80,30 @@ class EventStore implements EventStoreInterface
         $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
-        $nextVersion = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
+        $tryCount = 0;
+        $isDispatched = false;
+        while ($isDispatched === false) {
+            $nextVersion = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
+            try {
+                $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $nextVersion);
+                $stream->markAllApplied($nextVersion);
+                $isDispatched = true;
+                $tryCount++;
+            } catch (StorageConcurrencyException $exception) {
+                $tryCount++;
 
-        $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $nextVersion);
+                if ($tryCount > 10) {
+                    throw $exception;
+                }
 
-        $stream->markAllApplied($nextVersion);
+                $message = '%d catched storage concurrency exception before success for aggregate %s in stream identifier %s';
+                $this->logger->log(vsprintf($message, [
+                    $tryCount,
+                    $aggregateIdentifier,
+                    $streamIdentifier
+                ]), LOG_NOTICE);
+            }
+        }
     }
 
     /**
@@ -123,9 +143,9 @@ class EventStore implements EventStoreInterface
     {
         if (!$this->storage instanceof PreviousEventsInterface) {
             throw new ConcurrencyException(
-                sprintf(
+                vsprintf(
                     'Aggregate root versions mismatch, current stored version: %d, current version: %d',
-                    $currentStoredVersion, $currentVersion
+                    [$currentStoredVersion, $currentVersion]
                 ), [], 1472221044
             );
         }
@@ -143,9 +163,9 @@ class EventStore implements EventStoreInterface
 
         if ($messages !== []) {
             $exception = new ConcurrencyException(
-                sprintf(
+                vsprintf(
                     'Aggregate root versions mismatch, current stored version: %d, current version: %d, unable to fix the conflict automatically',
-                    $currentStoredVersion, $currentVersion
+                    [$currentStoredVersion, $currentVersion]
                 ), $messages, 1472221024
             );
             throw $exception;
