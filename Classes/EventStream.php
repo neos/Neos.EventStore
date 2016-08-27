@@ -58,6 +58,7 @@ class EventStream implements \IteratorAggregate
         $this->aggregateIdentifier = $aggregateIdentifier;
         $this->aggregateName = $aggregateName;
         $this->events = $events;
+        $this->version = $version;
     }
 
     /**
