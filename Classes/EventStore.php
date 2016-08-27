@@ -7,6 +7,7 @@ namespace Ttree\EventStore;
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
+use Ttree\Cqrs\Event\EventInterface;
 use Ttree\EventStore\Exception\ConcurrencyException;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use Ttree\EventStore\Storage\EventStorageInterface;
@@ -107,6 +108,19 @@ class EventStore implements EventStoreInterface
             return $currentVersion + $eventCounter;
         }
 
+        return $this->conflictsResolution($aggregateIdentifier, $currentVersion, $currentStoredVersion, $eventData);
+    }
+
+    /**
+     * @param string $aggregateIdentifier
+     * @param integer $currentVersion
+     * @param integer $currentStoredVersion
+     * @param array $eventData
+     * @return integer
+     * @throws ConcurrencyException
+     */
+    protected function conflictsResolution(string $aggregateIdentifier, int $currentVersion, int $currentStoredVersion, array $eventData): int
+    {
         if (!$this->storage instanceof PreviousEventsInterface) {
             throw new ConcurrencyException(
                 sprintf(
@@ -115,14 +129,15 @@ class EventStore implements EventStoreInterface
                 ), [], 1472221044
             );
         }
+        $eventCounter = count($eventData);
 
         $previousEventData = $this->storage->getPreviousEvents($aggregateIdentifier, $currentVersion);
-        $previousEventTypes = array_map(function (array $eventData) {
-            return $eventData['type'];
+        $previousEventTypes = array_map(function (EventInterface $event) {
+            return $event->getName();
         }, $previousEventData->getEvents());
         $messages = [];
-        array_map(function (array $event) use ($previousEventTypes, &$messages) {
-            $this->conflictResolver->conflictWith($event['type'], $previousEventTypes);
+        array_map(function (EventInterface $event) use ($previousEventTypes, &$messages) {
+            $this->conflictResolver->conflictWith($event->getName(), $previousEventTypes);
             $messages += $this->conflictResolver->getLastMessages();
         }, $eventData);
 
