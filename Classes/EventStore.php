@@ -88,20 +88,21 @@ class EventStore implements EventStoreInterface
                 $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $nextVersion);
                 $stream->markAllApplied($nextVersion);
                 $isDispatched = true;
-                $tryCount++;
+
+                if ($tryCount > 0) {
+                    $message = '%d catched storage concurrency exception before success for aggregate %s in stream identifier %s';
+                    $this->logger->log(vsprintf($message, [
+                        $tryCount,
+                        $aggregateIdentifier,
+                        $streamIdentifier
+                    ]), LOG_NOTICE);
+                }
             } catch (StorageConcurrencyException $exception) {
                 $tryCount++;
-
-                if ($tryCount > 10) {
+                if ($tryCount > 20) {
                     throw $exception;
                 }
-
-                $message = '%d catched storage concurrency exception before success for aggregate %s in stream identifier %s';
-                $this->logger->log(vsprintf($message, [
-                    $tryCount,
-                    $aggregateIdentifier,
-                    $streamIdentifier
-                ]), LOG_NOTICE);
+                usleep(10 * $tryCount);
             }
         }
     }
