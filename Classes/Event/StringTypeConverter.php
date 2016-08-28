@@ -39,7 +39,6 @@ class StringTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        print_r('fooo' . PHP_EOL);
         $serializer = new JsonSerializer();
         return $serializer->serialize($source);
     }
