@@ -156,11 +156,11 @@ class EventStore implements EventStoreInterface
 
         $previousEventData = $this->storage->getPreviousEvents($aggregateIdentifier, $currentVersion);
         $previousEventTypes = array_map(function (EventTransport $eventTransport) {
-            return EventType::create($eventTransport->getEvent());
+            return EventType::get($eventTransport->getEvent());
         }, $previousEventData->getEvents());
         $messages = [];
         array_map(function (EventTransport $eventTransport) use ($previousEventTypes, &$messages) {
-            $name = EventType::create($eventTransport->getEvent());
+            $name = EventType::get($eventTransport->getEvent());
             $this->conflictResolver->conflictWith($name, $previousEventTypes);
             $messages += $this->conflictResolver->getLastMessages();
         }, $eventData);
