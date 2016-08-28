@@ -8,6 +8,8 @@ namespace Ttree\EventStore;
  */
 
 use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Event\EventTransport;
+use Ttree\Cqrs\Event\EventType;
 use Ttree\EventStore\Exception\ConcurrencyException;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use Ttree\EventStore\Exception\StorageConcurrencyException;
@@ -153,12 +155,13 @@ class EventStore implements EventStoreInterface
         $eventCounter = count($eventData);
 
         $previousEventData = $this->storage->getPreviousEvents($aggregateIdentifier, $currentVersion);
-        $previousEventTypes = array_map(function (EventInterface $event) {
-            return $event->getName();
+        $previousEventTypes = array_map(function (EventTransport $eventTransport) {
+            return EventType::create($eventTransport->getEvent());
         }, $previousEventData->getEvents());
         $messages = [];
-        array_map(function (EventInterface $event) use ($previousEventTypes, &$messages) {
-            $this->conflictResolver->conflictWith($event->getName(), $previousEventTypes);
+        array_map(function (EventTransport $eventTransport) use ($previousEventTypes, &$messages) {
+            $name = EventType::create($eventTransport->getEvent());
+            $this->conflictResolver->conflictWith($name, $previousEventTypes);
             $messages += $this->conflictResolver->getLastMessages();
         }, $eventData);
 
