@@ -9,6 +9,7 @@ namespace Ttree\EventStore\Domain;
 
 use Ttree\Cqrs\Domain\AggregateRootTrait;
 use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Event\EventTransport;
 use Ttree\Cqrs\RuntimeException;
 use Ttree\EventStore\EventStream;
 use TYPO3\Flow\Annotations as Flow;
@@ -32,9 +33,9 @@ trait EventSourcedAggregateRootTrait
 
         $this->setAggregateIdentifier($stream->getAggregateIdentifier());
 
-        /** @var EventInterface $event */
-        foreach ($stream as $event) {
-            $this->executeEvent($event);
+        /** @var EventTransport $eventTransport */
+        foreach ($stream as $eventTransport) {
+            $this->executeEvent($eventTransport->getEvent());
         }
     }
 }

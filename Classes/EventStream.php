@@ -8,6 +8,7 @@ namespace Ttree\EventStore;
  */
 
 use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Event\EventTransport;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
 
@@ -110,18 +111,18 @@ class EventStream implements \IteratorAggregate
     }
 
     /**
-     * @param EventInterface $event
+     * @param EventTransport $event
      */
-    public function addEvent(EventInterface $event)
+    public function addEvent(EventTransport $event)
     {
         $this->events[] = $event;
         $this->new[] = $event;
     }
 
     /**
-     * @param EventInterface[] $events
+     * @param EventTransport[] $events
      */
-    public function addEvents(array $events)
+    public function addEvents(...$events)
     {
         foreach ($events as $event) {
             $this->addEvent($event);

@@ -12,6 +12,7 @@ use Ttree\Cqrs\Domain\Exception\AggregateRootNotFoundException;
 use Ttree\Cqrs\Domain\RepositoryInterface;
 use Ttree\Cqrs\Event\EventBusInterface;
 use Ttree\Cqrs\Event\EventInterface;
+use Ttree\Cqrs\Event\EventTransport;
 use Ttree\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
@@ -76,14 +77,14 @@ abstract class EventSourcedRepository implements RepositoryInterface
             );
         } finally {
             $uncommitedEvents = $aggregate->pullUncommittedEvents();
-            $stream->addEvents($uncommitedEvents);
+            $stream->addEvents(...$uncommitedEvents);
         }
 
         $this->eventStore->commit($stream);
 
-        /** @var EventInterface $event */
+        /** @var EventTransport $event */
         foreach ($uncommitedEvents as $event) {
-            $this->eventBus->handle($event);
+            $this->eventBus->handle($event->getEvent());
         }
     }
 

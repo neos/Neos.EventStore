@@ -9,31 +9,17 @@ namespace Ttree\EventStore\Event;
 
 use Ttree\Cqrs\Event\EventInterface;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Zumba\JsonSerializer\JsonSerializer;
 
 /**
  * ArrayTypeConverter
  */
-class ArrayTypeConverter extends AbstractTypeConverter
+class ArrayTypeConverter extends StringTypeConverter
 {
-    /**
-     * @var array<string>
-     */
-    protected $sourceTypes = [EventInterface::class];
-
     /**
      * @var string
      */
     protected $targetType = 'array';
-
-    /**
-     * @var ObjectManagerInterface
-     * @Flow\Inject
-     */
-    protected $objectManager;
 
     /**
      * @param EventInterface $source
@@ -45,8 +31,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $serializer = new JsonSerializer();
-        $data = $serializer->serialize($source);
+        $data = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
         return json_decode($data, true);
     }
 }
