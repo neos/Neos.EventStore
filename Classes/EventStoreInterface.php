@@ -29,8 +29,8 @@ interface EventStoreInterface
     /**
      * Persist new AR events
      * @param  EventStream $stream
-     * @return void
+     * @return integer commited version number
      * @throws \Exception
      */
-    public function commit(EventStream $stream);
+    public function commit(EventStream $stream): int;
 }

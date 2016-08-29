@@ -7,7 +7,6 @@ namespace Ttree\EventStore;
  * (c) Hand crafted with love in each details by medialib.tv
  */
 
-use Ttree\Cqrs\Event\EventInterface;
 use Ttree\Cqrs\Event\EventTransport;
 use Ttree\Cqrs\Event\EventType;
 use Ttree\EventStore\Exception\ConcurrencyException;
@@ -67,29 +66,30 @@ class EventStore implements EventStoreInterface
     /**
      * Persist new AR events
      * @param  EventStream $stream
+     * @return integer commited version number
      * @throws ConcurrencyException
      */
-    public function commit(EventStream $stream)
+    public function commit(EventStream $stream) :int
     {
         $newEvents = $stream->getNewEvents();
 
+        $streamIdentifier = $stream->getIdentifier();
         if ($newEvents === []) {
-            return;
+            return $this->storage->getCurrentVersion($streamIdentifier);
         }
 
-        $streamIdentifier = $stream->getIdentifier();
         $aggregateIdentifier = $stream->getAggregateIdentifier();
         $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
         $tryCount = 0;
-        $isDispatched = false;
-        while ($isDispatched === false) {
-            $nextVersion = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
+        $isApplied = false;
+        while ($isApplied === false) {
+            $version = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
             try {
-                $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $nextVersion);
-                $stream->markAllApplied($nextVersion);
-                $isDispatched = true;
+                $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $version);
+                $stream->markAllApplied($version);
+                $isApplied = true;
 
                 if ($tryCount > 0) {
                     $message = '%d catched storage concurrency exception before success for aggregate %s in stream identifier %s';
@@ -99,6 +99,8 @@ class EventStore implements EventStoreInterface
                         $streamIdentifier
                     ]), LOG_NOTICE);
                 }
+
+                return $version;
             } catch (StorageConcurrencyException $exception) {
                 $tryCount++;
                 if ($tryCount > 20) {

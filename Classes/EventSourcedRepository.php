@@ -11,9 +11,9 @@ use Ttree\Cqrs\Domain\AggregateRootInterface;
 use Ttree\Cqrs\Domain\Exception\AggregateRootNotFoundException;
 use Ttree\Cqrs\Domain\RepositoryInterface;
 use Ttree\Cqrs\Event\EventBusInterface;
-use Ttree\Cqrs\Event\EventInterface;
 use Ttree\Cqrs\Event\EventTransport;
 use Ttree\EventStore\Domain\EventSourcedAggregateRootInterface;
+use Ttree\EventStore\Event\Metadata;
 use Ttree\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -80,11 +80,14 @@ abstract class EventSourcedRepository implements RepositoryInterface
             $stream->addEvents(...$uncommitedEvents);
         }
 
-        $this->eventStore->commit($stream);
+        $version = $this->eventStore->commit($stream);
 
-        /** @var EventTransport $event */
-        foreach ($uncommitedEvents as $event) {
-            $this->eventBus->handle($event->getEvent());
+        /** @var EventTransport $eventTransport */
+        foreach ($uncommitedEvents as $eventTransport) {
+            // @todo metadata enrichment must be done in external service, with some middleware support
+            $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
+            
+            $this->eventBus->handle($eventTransport);
         }
     }
 
