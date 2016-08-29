@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Event;
+namespace Ttree\EventStore\Event\EventTransport;
 
 /*
  * This file is part of the Ttree.Cqrs package.
@@ -8,29 +8,21 @@ namespace Ttree\EventStore\Event;
  */
 
 use Ttree\Cqrs\Event\EventInterface;
-use Ttree\Cqrs\Event\EventTransport;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Zumba\JsonSerializer\JsonSerializer;
 
 /**
- * StringTypeConverter
+ * ArrayTypeConverter
  */
-class StringTypeConverter extends AbstractTypeConverter
+class ArrayTypeConverter extends StringTypeConverter
 {
-    /**
-     * @var array<string>
-     */
-    protected $sourceTypes = [EventTransport::class];
-
     /**
      * @var string
      */
-    protected $targetType = 'string';
+    protected $targetType = 'array';
 
     /**
-     * @param EventTransport $source
+     * @param EventInterface $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
@@ -39,7 +31,7 @@ class StringTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $serializer = new JsonSerializer();
-        return $serializer->serialize($source);
+        $data = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
+        return json_decode($data, true);
     }
 }
