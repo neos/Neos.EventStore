@@ -2,9 +2,13 @@
 namespace Ttree\EventStore;
 
 /*
- * This file is part of the Ttree.Cqrs package.
+ * This file is part of the Neos.EventStore package.
  *
- * (c) Hand crafted with love in each details by medialib.tv
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
  */
 
 use Ttree\Cqrs\Domain\AggregateRootInterface;
@@ -86,7 +90,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
         foreach ($uncommitedEvents as $eventTransport) {
             // @todo metadata enrichment must be done in external service, with some middleware support
             $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
-            
+
             $this->eventBus->handle($eventTransport);
         }
     }

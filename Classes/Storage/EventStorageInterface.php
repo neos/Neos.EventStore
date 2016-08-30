@@ -2,13 +2,16 @@
 namespace Ttree\EventStore\Storage;
 
 /*
- * This file is part of the Ttree.Cqrs package.
+ * This file is part of the Neos.EventStore package.
  *
- * (c) Hand crafted with love in each details by medialib.tv
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
  */
 
 use Ttree\EventStore\EventStreamData;
-use Ttree\EventStore\Exception\ConcurrencyException;
 use Ttree\EventStore\Exception\StorageConcurrencyException;
 
 /**
