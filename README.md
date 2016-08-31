@@ -1,8 +1,8 @@
-# EventStore infrastucture package for Flow Framework
+# EventStore for Flow Framework project
 
 _This package is currently under development and not fully working, please don't use it in production._
 
-This package is inspired by [LiteCQRS](https://github.com/beberlei/litecqrs-php) and [Broadway](https://github.com/qandidate-labs/broadway).
+Check for more documentation [Neos.Cqrs](https://github.com/neos/Neos.Cqrs)**: mostly infrastructure (interface, trait, abstract class) and the event/query bus
 
 The goal of the project is to provide infrastructure to support ES (Event Sourcing) project based on Flow Framework
 
@@ -13,34 +13,6 @@ The goal of the project is to provide infrastructure to support ES (Event Sourci
 * [x] **EventStore**: default implementation, implement your own based on ```EventStoreInterface```
 * [x] **EventStream**
 * [x] **EventStreamData**
-
-## ConcurrencyConflictResolver
-
-Sometimes it's useful to have a fine grained control to solve conflicting event, to avoid triggering a concurrency 
-exception when not strictly required or to give user more useful exception messages.
-
-_This is current a work in progress implementation_
-
-### How to declare conflicting events 
-
-By implementing the ```ConflictAwareEventInterface``` like this:
-
-    class ButtonPushed extends AbstractEvent implements ConflictAwareEventInterface
-    {
-        /**
-         * @return array
-         */
-        public static function conflictsWith(): array
-        {
-            return [
-                ButtonDisabled::class => 'The button has been disabled',
-                ButtonRemoved::class => 'The button has been removed',
-            ];
-        }
-    }
-    
-If the method ```ConflictAwareEventInterface::conflictsWith` returns an emtpy array, the event will never conflicts and 
-the store will solve the version concurrency issue automatically.
 
 ## EventStore Implementations
 

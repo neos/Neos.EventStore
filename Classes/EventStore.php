@@ -11,13 +11,9 @@ namespace Neos\EventStore;
  * source code.
  */
 
-use Neos\Cqrs\Event\EventTransport;
-use Neos\Cqrs\Event\EventType;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
-use Neos\EventStore\Exception\StorageConcurrencyException;
 use Neos\EventStore\Storage\EventStorageInterface;
-use Neos\EventStore\Storage\PreviousEventsInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 
@@ -31,12 +27,6 @@ class EventStore implements EventStoreInterface
      * @Flow\Inject
      */
     protected $storage;
-
-    /**
-     * @var ConcurrencyConflictResolverInterface
-     * @Flow\Inject
-     */
-    protected $conflictResolver;
 
     /**
      * @var SystemLoggerInterface
@@ -86,33 +76,11 @@ class EventStore implements EventStoreInterface
         $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
-        $tryCount = 0;
-        $isApplied = false;
-        while ($isApplied === false) {
-            $version = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
-            try {
-                $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $version);
-                $stream->markAllApplied($version);
-                $isApplied = true;
+        $version = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
+        $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $version);
+        $stream->markAllApplied($version);
 
-                if ($tryCount > 0) {
-                    $message = '%d catched storage concurrency exception before success for aggregate %s in stream identifier %s';
-                    $this->logger->log(vsprintf($message, [
-                        $tryCount,
-                        $aggregateIdentifier,
-                        $streamIdentifier
-                    ]), LOG_NOTICE);
-                }
-
-                return $version;
-            } catch (StorageConcurrencyException $exception) {
-                $tryCount++;
-                if ($tryCount > 20) {
-                    throw $exception;
-                }
-                usleep(10 * $tryCount);
-            }
-        }
+        return $version;
     }
 
     /**
@@ -133,24 +101,7 @@ class EventStore implements EventStoreInterface
         $eventCounter = count($eventData);
         $currentStoredVersion = $this->storage->getCurrentVersion($aggregateIdentifier);
 
-        if ($currentVersion === $currentStoredVersion) {
-            return $currentVersion + $eventCounter;
-        }
-
-        return $this->conflictsResolution($aggregateIdentifier, $currentVersion, $currentStoredVersion, $eventData);
-    }
-
-    /**
-     * @param string $aggregateIdentifier
-     * @param integer $currentVersion
-     * @param integer $currentStoredVersion
-     * @param array $eventData
-     * @return integer
-     * @throws ConcurrencyException
-     */
-    protected function conflictsResolution(string $aggregateIdentifier, int $currentVersion, int $currentStoredVersion, array $eventData): int
-    {
-        if (!$this->storage instanceof PreviousEventsInterface) {
+        if ($currentVersion !== $currentStoredVersion) {
             throw new ConcurrencyException(
                 vsprintf(
                     'Aggregate root versions mismatch, current stored version: %d, current version: %d',
@@ -158,30 +109,8 @@ class EventStore implements EventStoreInterface
                 ), [], 1472221044
             );
         }
-        $eventCounter = count($eventData);
 
-        $previousEventData = $this->storage->getPreviousEvents($aggregateIdentifier, $currentVersion);
-        $previousEventTypes = array_map(function (EventTransport $eventTransport) {
-            return EventType::get($eventTransport->getEvent());
-        }, $previousEventData->getEvents());
-        $messages = [];
-        array_map(function (EventTransport $eventTransport) use ($previousEventTypes, &$messages) {
-            $name = EventType::get($eventTransport->getEvent());
-            $this->conflictResolver->conflictWith($name, $previousEventTypes);
-            $messages += $this->conflictResolver->getLastMessages();
-        }, $eventData);
-
-        if ($messages !== []) {
-            $exception = new ConcurrencyException(
-                vsprintf(
-                    'Aggregate root versions mismatch, current stored version: %d, current version: %d, unable to fix the conflict automatically',
-                    [$currentStoredVersion, $currentVersion]
-                ), $messages, 1472221024
-            );
-            throw $exception;
-        }
-        $this->logger->log('Aggregate root versions mismatch, but solved automatically for you', LOG_NOTICE);
-        return $this->storage->getCurrentVersion($aggregateIdentifier) + $eventCounter;
+        return $currentVersion + $eventCounter;
     }
 
     /**
