@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Exception;
+namespace Neos\EventStore\Exception;
 
 /*
  * This file is part of the Neos.EventStore package.

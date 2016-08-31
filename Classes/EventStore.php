@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore;
+namespace Neos\EventStore;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,13 +11,13 @@ namespace Ttree\EventStore;
  * source code.
  */
 
-use Ttree\Cqrs\Event\EventTransport;
-use Ttree\Cqrs\Event\EventType;
-use Ttree\EventStore\Exception\ConcurrencyException;
-use Ttree\EventStore\Exception\EventStreamNotFoundException;
-use Ttree\EventStore\Exception\StorageConcurrencyException;
-use Ttree\EventStore\Storage\EventStorageInterface;
-use Ttree\EventStore\Storage\PreviousEventsInterface;
+use Neos\Cqrs\Event\EventTransport;
+use Neos\Cqrs\Event\EventType;
+use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Exception\EventStreamNotFoundException;
+use Neos\EventStore\Exception\StorageConcurrencyException;
+use Neos\EventStore\Storage\EventStorageInterface;
+use Neos\EventStore\Storage\PreviousEventsInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 

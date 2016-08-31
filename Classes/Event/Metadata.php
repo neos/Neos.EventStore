@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Event;
+namespace Neos\EventStore\Event;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -18,5 +18,5 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class Metadata
 {
-    const VERSION = 'ttree.eventstore.event:version';
+    const VERSION = 'neos.eventstore.event:version';
 }

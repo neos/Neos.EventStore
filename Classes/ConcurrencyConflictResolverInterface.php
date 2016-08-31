@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore;
+namespace Neos\EventStore;
 
 /*
  * This file is part of the Neos.EventStore package.

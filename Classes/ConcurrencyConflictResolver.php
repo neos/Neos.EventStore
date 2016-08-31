@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore;
+namespace Neos\EventStore;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,7 +11,7 @@ namespace Ttree\EventStore;
  * source code.
  */
 
-use Ttree\EventStore\Event\ConflictAwareEventInterface;
+use Neos\EventStore\Event\ConflictAwareEventInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;

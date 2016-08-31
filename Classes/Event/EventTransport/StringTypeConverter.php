@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Event\EventTransport;
+namespace Neos\EventStore\Event\EventTransport;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,7 +11,7 @@ namespace Ttree\EventStore\Event\EventTransport;
  * source code.
  */
 
-use Ttree\Cqrs\Event\EventTransport;
+use Neos\Cqrs\Event\EventTransport;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Zumba\JsonSerializer\JsonSerializer;

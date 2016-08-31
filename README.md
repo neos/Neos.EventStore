@@ -46,15 +46,8 @@ the store will solve the version concurrency issue automatically.
 
 Check external packages:
 
-* [x] **[Ttree.EventStore.InMemoryStorageAdapter](https://github.com/dfeyer/Ttree.EventStore.InMemoryStorageAdapter)**: simple testing implementation with not persistence only memory based
-* [x] **[Ttree.EventStore.DatabaseStorageAdapter](https://github.com/dfeyer/Ttree.EventStore.DatabaseStorageAdapter)**: Doctrine DBAL implementation
-
-Acknowledgments
----------------
-
-Development sponsored by [ttree ltd - neos solution provider](http://ttree.ch).
-
-We try our best to craft this package with a lots of love, we are open to sponsoring, support request, ... just contact us.
+* [x] **[Neos.EventStore.InMemoryStorageAdapter](https://github.com/dfeyer/Neos.EventStore.InMemoryStorageAdapter)**: simple testing implementation with not persistence only memory based
+* [x] **[Neos.EventStore.DatabaseStorageAdapter](https://github.com/dfeyer/Neos.EventStore.DatabaseStorageAdapter)**: Doctrine DBAL implementation
 
 License
 -------

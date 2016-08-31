@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Domain;
+namespace Neos\EventStore\Domain;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,8 +11,8 @@ namespace Ttree\EventStore\Domain;
  * source code.
  */
 
-use Ttree\Cqrs\Domain\AggregateRootInterface;
-use Ttree\EventStore\EventStream;
+use Neos\Cqrs\Domain\AggregateRootInterface;
+use Neos\EventStore\EventStream;
 
 /**
  * AggregateRootInterface

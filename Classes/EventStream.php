@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore;
+namespace Neos\EventStore;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,8 +11,8 @@ namespace Ttree\EventStore;
  * source code.
  */
 
-use Ttree\Cqrs\Event\EventInterface;
-use Ttree\Cqrs\Event\EventTransport;
+use Neos\Cqrs\Event\EventInterface;
+use Neos\Cqrs\Event\EventTransport;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Algorithms;
 

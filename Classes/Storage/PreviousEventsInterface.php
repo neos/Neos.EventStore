@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Storage;
+namespace Neos\EventStore\Storage;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,7 +11,7 @@ namespace Ttree\EventStore\Storage;
  * source code.
  */
 
-use Ttree\EventStore\EventStream;
+use Neos\EventStore\EventStream;
 
 /**
  * PreviousEventsInterface

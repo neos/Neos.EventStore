@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore;
+namespace Neos\EventStore;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,14 +11,14 @@ namespace Ttree\EventStore;
  * source code.
  */
 
-use Ttree\Cqrs\Domain\AggregateRootInterface;
-use Ttree\Cqrs\Domain\Exception\AggregateRootNotFoundException;
-use Ttree\Cqrs\Domain\RepositoryInterface;
-use Ttree\Cqrs\Event\EventBusInterface;
-use Ttree\Cqrs\Event\EventTransport;
-use Ttree\EventStore\Domain\EventSourcedAggregateRootInterface;
-use Ttree\EventStore\Event\Metadata;
-use Ttree\EventStore\Exception\EventStreamNotFoundException;
+use Neos\Cqrs\Domain\AggregateRootInterface;
+use Neos\Cqrs\Domain\Exception\AggregateRootNotFoundException;
+use Neos\Cqrs\Domain\RepositoryInterface;
+use Neos\Cqrs\Event\EventBusInterface;
+use Neos\Cqrs\Event\EventTransport;
+use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
+use Neos\EventStore\Event\Metadata;
+use Neos\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 
 /**

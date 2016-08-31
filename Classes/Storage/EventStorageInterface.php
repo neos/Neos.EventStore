@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Storage;
+namespace Neos\EventStore\Storage;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,8 +11,8 @@ namespace Ttree\EventStore\Storage;
  * source code.
  */
 
-use Ttree\EventStore\EventStreamData;
-use Ttree\EventStore\Exception\StorageConcurrencyException;
+use Neos\EventStore\EventStreamData;
+use Neos\EventStore\Exception\StorageConcurrencyException;
 
 /**
  * EventStorageInterface

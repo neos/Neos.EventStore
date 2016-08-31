@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Exception;
+namespace Neos\EventStore\Exception;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,7 +11,7 @@ namespace Ttree\EventStore\Exception;
  * source code.
  */
 
-use Ttree\Cqrs\RuntimeException;
+use Neos\Cqrs\RuntimeException;
 
 /**
  * EventSerializerException

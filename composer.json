@@ -1,20 +1,20 @@
 {
     "description": "",
     "type": "neos-package",
-    "name": "ttree/eventstore",
+    "name": "neos/eventstore",
     "require": {
         "typo3/flow": "*",
-        "ttree/cqrs": "*",
+        "neos/cqrs": "*",
         "zumba/json-serializer": "^2.1"
     },
     "autoload": {
         "psr-4": {
-            "Ttree\\EventStore\\": "Classes/"
+            "Neos\\EventStore\\": "Classes/"
         }
     },
     "extra": {
         "neos": {
-            "package-key": "Ttree.EventStore"
+            "package-key": "Neos.EventStore"
         }
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Ttree\EventStore\Event;
+namespace Neos\EventStore\Event;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,9 +11,9 @@ namespace Ttree\EventStore\Event;
  * source code.
  */
 
-use Ttree\Cqrs\Domain\Timestamp;
-use Ttree\Cqrs\Event\EventInterface;
-use Ttree\EventStore\Exception\EventSerializerException;
+use Neos\Cqrs\Domain\Timestamp;
+use Neos\Cqrs\Event\EventInterface;
+use Neos\EventStore\Exception\EventSerializerException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
