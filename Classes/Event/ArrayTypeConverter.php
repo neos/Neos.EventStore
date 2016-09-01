@@ -17,6 +17,7 @@ use Neos\EventStore\Exception\EventSerializerException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use Zumba\JsonSerializer\JsonSerializer;
 
 /**
  * ArrayTypeConverter
@@ -44,19 +45,8 @@ class ArrayTypeConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
+        $serializer = new JsonSerializer();
         $data = ObjectAccess::getGettableProperties($source);
-        foreach ($data as $propertyName => $propertyValue) {
-            switch (true) {
-                case $propertyValue instanceof \DateTime:
-                    $propertyValue = $propertyValue->format(Timestamp::OUTPUT_FORMAT);
-                    break;
-                default:
-                    if (!is_scalar($propertyValue)) {
-                        throw new EventSerializerException('Event can only contains scalar type values or DataTime', 1472457099);
-                    }
-            }
-            $data[$propertyName] = $propertyValue;
-        }
-        return $data;
+        return json_decode($serializer->serialize($data));
     }
 }
