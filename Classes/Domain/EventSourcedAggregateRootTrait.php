@@ -37,7 +37,7 @@ trait EventSourcedAggregateRootTrait
 
         /** @var EventTransport $eventTransport */
         foreach ($stream as $eventTransport) {
-            $this->executeEvent($eventTransport->getEvent());
+            $this->apply($eventTransport->getEvent());
         }
     }
 }
