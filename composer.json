@@ -3,7 +3,7 @@
     "type": "neos-package",
     "name": "neos/eventstore",
     "require": {
-        "typo3/flow": "*",
+        "typo3/flow": "^3.2",
         "neos/cqrs": "*",
         "zumba/json-serializer": "^2.1"
     },
