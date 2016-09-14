@@ -68,11 +68,11 @@ class EventStore implements EventStoreInterface
         $newEvents = $stream->getNewEvents();
 
         $streamIdentifier = $stream->getIdentifier();
+        $aggregateIdentifier = $stream->getAggregateIdentifier();
         if ($newEvents === []) {
-            return $this->storage->getCurrentVersion($streamIdentifier);
+            return $this->storage->getCurrentVersion($aggregateIdentifier);
         }
 
-        $aggregateIdentifier = $stream->getAggregateIdentifier();
         $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
