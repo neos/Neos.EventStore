@@ -14,7 +14,7 @@ namespace Neos\EventStore;
 use Neos\Cqrs\Domain\AggregateRootInterface;
 use Neos\Cqrs\Domain\Exception\AggregateRootNotFoundException;
 use Neos\Cqrs\Domain\RepositoryInterface;
-use Neos\Cqrs\Event\EventBusInterface;
+use Neos\Cqrs\Event\EventBus;
 use Neos\Cqrs\Event\EventTransport;
 use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Neos\EventStore\Event\Metadata;
@@ -27,13 +27,13 @@ use TYPO3\Flow\Annotations as Flow;
 abstract class EventSourcedRepository implements RepositoryInterface
 {
     /**
-     * @var EventStoreInterface
+     * @var EventStore
      * @Flow\Inject
      */
     protected $eventStore;
 
     /**
-     * @var EventBusInterface
+     * @var EventBus
      * @Flow\Inject
      */
     protected $eventBus;

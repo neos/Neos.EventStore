@@ -11,9 +11,7 @@ namespace Neos\EventStore\Event;
  * source code.
  */
 
-use Neos\Cqrs\Domain\Timestamp;
 use Neos\Cqrs\Event\EventInterface;
-use Neos\EventStore\Exception\EventSerializerException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -40,7 +38,6 @@ class ArrayTypeConverter extends AbstractTypeConverter
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
-     * @throws EventSerializerException
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)

@@ -20,7 +20,7 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 /**
  * EventStore
  */
-class EventStore implements EventStoreInterface
+class EventStore
 {
     /**
      * @var EventStorageInterface
