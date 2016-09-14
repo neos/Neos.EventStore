@@ -67,7 +67,6 @@ class EventStore implements EventStoreInterface
     {
         $newEvents = $stream->getNewEvents();
 
-        $streamIdentifier = $stream->getIdentifier();
         $aggregateIdentifier = $stream->getAggregateIdentifier();
         if ($newEvents === []) {
             return $this->storage->getCurrentVersion($aggregateIdentifier);
@@ -77,7 +76,7 @@ class EventStore implements EventStoreInterface
         $currentVersion = $stream->getVersion();
 
         $version = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
-        $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $version);
+        $this->storage->commit($aggregateIdentifier, $aggregateName, $newEvents, $version);
         $stream->markAllApplied($version);
 
         return $version;
