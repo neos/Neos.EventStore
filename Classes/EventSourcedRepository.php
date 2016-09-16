@@ -20,6 +20,7 @@ use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * EventSourcedRepository
@@ -54,13 +55,9 @@ abstract class EventSourcedRepository implements RepositoryInterface
             ), 1471077948);
         }
 
-        // todo don't use the reflexion directly
-        $reflection = new \ReflectionClass($eventStream->getAggregateName());
-
         /** @var EventSourcedAggregateRootInterface $aggregateRoot */
-        $aggregateRoot = $reflection->newInstanceWithoutConstructor();
+        $aggregateRoot = unserialize('O:' . strlen($eventStream->getAggregateName()) . ':"' . $eventStream->getAggregateName() . '":0:{};');
         $aggregateRoot->reconstituteFromEventStream($eventStream);
-
         return $aggregateRoot;
     }
 
@@ -76,7 +73,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
         } catch (EventStreamNotFoundException $e) {
             $stream = new EventStream(
                 $aggregate->getAggregateIdentifier(),
-                get_class($aggregate),
+                TypeHandling::getTypeForValue($aggregate),
                 []
             );
         } finally {
