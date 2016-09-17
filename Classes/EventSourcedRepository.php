@@ -88,15 +88,14 @@ abstract class EventSourcedRepository implements RepositoryInterface
             $uncommitedEvents = $aggregate->pullUncommittedEvents();
             $stream->addEvents(...$uncommitedEvents);
         }
-        $version = $this->eventStore->commit($this->generateStreamName($aggregate->getAggregateIdentifier()), $stream);
-
-        /** @var EventTransport $eventTransport */
-        foreach ($uncommitedEvents as $eventTransport) {
-            // @todo metadata enrichment must be done in external service, with some middleware support
-            $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
-
-            $this->eventBus->handle($eventTransport);
-        }
+        $this->eventStore->commit($this->generateStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommitedEvents) {
+            /** @var EventTransport $eventTransport */
+            foreach ($uncommitedEvents as $eventTransport) {
+                // @todo metadata enrichment must be done in external service, with some middleware support
+                $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
+                $this->eventBus->handle($eventTransport);
+            }
+        });
     }
 
     /**

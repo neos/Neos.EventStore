@@ -36,7 +36,7 @@ class EventStore
 
     /**
      * Get events for AR
-     * @param  string $streamName
+     * @param string $streamName
      * @return EventStream Can be empty stream
      * @throws EventStreamNotFoundException
      */
@@ -56,12 +56,13 @@ class EventStore
     }
 
     /**
-     * @param  string $streamName
-     * @param  EventStream $stream
-     * @return integer commited version number
+     * @param string $streamName
+     * @param EventStream $stream
+     * @return int commited version number
+     * @param \Closure $callback
      * @throws ConcurrencyException
      */
-    public function commit(string $streamName, EventStream $stream) :int
+    public function commit(string $streamName, EventStream $stream, \Closure $callback = null) :int
     {
         $newEvents = $stream->getNewEvents();
 
@@ -73,7 +74,7 @@ class EventStore
 
         $version = $this->nextVersion($streamName, $currentVersion, $newEvents);
 
-        $this->storage->commit($streamName, $newEvents, $version);
+        $this->storage->commit($streamName, $newEvents, $version, $callback);
 
         $stream->markAllApplied($version);
 
