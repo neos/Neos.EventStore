@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventStore\Event;
+namespace Neos\EventStore\Property\TypeConverter;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -11,21 +11,22 @@ namespace Neos\EventStore\Event;
  * source code.
  */
 
-use Neos\Cqrs\Event\EventInterface;
+use Neos\Cqrs\Domain\Timestamp;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Property\Exception\TypeConverterException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use Zumba\JsonSerializer\JsonSerializer;
 
 /**
- * ArrayTypeConverter
+ * DateTimeImmutableSerializer
  */
-class ArrayTypeConverter extends AbstractTypeConverter
+class DateTimeImmutableSerializer extends AbstractTypeConverter
 {
     /**
-     * @var array<string>
+     * @var array
      */
-    protected $sourceTypes = [EventInterface::class];
+    protected $sourceTypes = ['DateTimeImmutable'];
 
     /**
      * @var string
@@ -33,17 +34,19 @@ class ArrayTypeConverter extends AbstractTypeConverter
     protected $targetType = 'array';
 
     /**
-     * @param EventInterface $source
+     * @param \DateTimeInterface $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return array
+     * @return mixed|Error the target type, or an error object if a user-error occurred
+     * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        $serializer = new JsonSerializer();
-        $data = ObjectAccess::getGettableProperties($source);
-        return json_decode($serializer->serialize($data));
+        return [
+            'date' => $source->format(Timestamp::OUTPUT_FORMAT),
+            'dateFormat' => Timestamp::OUTPUT_FORMAT
+        ];
     }
 }

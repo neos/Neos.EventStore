@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventStore\Event\EventTransport;
+namespace Neos\EventStore\Event;
 
 /*
  * This file is part of the Neos.EventStore package.
@@ -12,29 +12,38 @@ namespace Neos\EventStore\Event\EventTransport;
  */
 
 use Neos\Cqrs\Event\EventInterface;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Property\TypeConverter\ArrayFromObjectConverter;
 
 /**
- * ArrayTypeConverter
+ * EventInterfaceSerializer
  */
-class ArrayTypeConverter extends StringTypeConverter
+class EventInterfaceSerializer extends ArrayFromObjectConverter
 {
+    /**
+     * @var array
+     */
+    protected $sourceTypes = [EventInterface::class];
+
     /**
      * @var string
      */
     protected $targetType = 'array';
 
     /**
-     * @param EventInterface $source
-     * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return array
-     * @api
+     * @var integer
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    protected $priority = 100;
+
+    /**
+     * @param string $targetType
+     * @param string $propertyName
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return string
+     */
+    public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
-        $data = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
-        return json_decode($data, true);
+        return 'array';
     }
 }

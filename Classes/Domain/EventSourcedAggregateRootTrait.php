@@ -33,8 +33,6 @@ trait EventSourcedAggregateRootTrait
             throw new RuntimeException('AggregateRoot is already reconstituted from event stream.');
         }
 
-        $this->setAggregateIdentifier($stream->getAggregateIdentifier());
-
         /** @var EventTransport $eventTransport */
         foreach ($stream as $eventTransport) {
             $this->apply($eventTransport->getEvent());

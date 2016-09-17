@@ -17,22 +17,22 @@ namespace Neos\EventStore;
 interface EventStoreInterface
 {
     /**
-     * @param  string $identifier
+     * @param  string $streamName
      * @return EventStream Can be empty stream
      */
-    public function get(string $identifier): EventStream;
+    public function get(string $streamName): EventStream;
 
     /**
-     * @param  string $identifier
+     * @param  string $streamName
      * @return boolean
      */
-    public function contains(string $identifier): bool;
+    public function contains(string $streamName): bool;
 
     /**
-     * Persist new AR events
+     * @param  string $streamName
      * @param  EventStream $stream
      * @return integer commited version number
      * @throws \Exception
      */
-    public function commit(EventStream $stream): int;
+    public function commit(string $streamName, EventStream $stream): int;
 }

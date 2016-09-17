@@ -22,21 +22,6 @@ use TYPO3\Flow\Utility\Algorithms;
 class EventStream implements \IteratorAggregate
 {
     /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var string
-     */
-    protected $aggregateIdentifier;
-
-    /**
-     * @var string
-     */
-    protected $aggregateName;
-
-    /**
      * @var EventInterface[] All AR events
      */
     protected $events = [];
@@ -52,42 +37,13 @@ class EventStream implements \IteratorAggregate
     protected $version;
 
     /**
-     * @param string $aggregateIdentifier
-     * @param string $aggregateName
      * @param EventInterface[] $events
      * @param integer $version
      */
-    public function __construct(string $aggregateIdentifier, string $aggregateName, array $events, int $version = 0)
+    public function __construct(array $events = [], int $version = 0)
     {
-        $this->identifier = Algorithms::generateUUID();
-        $this->aggregateIdentifier = $aggregateIdentifier;
-        $this->aggregateName = $aggregateName;
         $this->events = $events;
         $this->version = $version;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAggregateIdentifier()
-    {
-        return $this->aggregateIdentifier;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAggregateName()
-    {
-        return $this->aggregateName;
     }
 
     /**
