@@ -14,7 +14,6 @@ namespace Neos\EventStore;
 use Neos\Cqrs\Event\EventInterface;
 use Neos\Cqrs\Event\EventTransport;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Algorithms;
 
 /**
  * EventStream

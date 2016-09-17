@@ -20,7 +20,6 @@ use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * EventSourcedRepository
