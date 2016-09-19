@@ -36,48 +36,46 @@ class EventStore
 
     /**
      * Get events for AR
-     * @param  string $identifier
+     * @param string $streamName
      * @return EventStream Can be empty stream
      * @throws EventStreamNotFoundException
      */
-    public function get(string $identifier): EventStream
+    public function get(string $streamName): EventStream
     {
         /** @var EventStreamData $streamData */
-        $streamData = $this->storage->load($identifier);
+        $streamData = $this->storage->load($streamName);
 
         if (!$streamData || (!$streamData instanceof EventStreamData)) {
             throw new EventStreamNotFoundException();
         }
 
         return new EventStream(
-            $streamData->getAggregateIdentifier(),
-            $streamData->getAggregateName(),
             $streamData->getData(),
             $streamData->getVersion()
         );
     }
 
     /**
-     * Persist new AR events
-     * @param  EventStream $stream
-     * @return integer commited version number
+     * @param string $streamName
+     * @param EventStream $stream
+     * @return int commited version number
+     * @param \Closure $callback
      * @throws ConcurrencyException
      */
-    public function commit(EventStream $stream) :int
+    public function commit(string $streamName, EventStream $stream, \Closure $callback = null) :int
     {
         $newEvents = $stream->getNewEvents();
 
-        $streamIdentifier = $stream->getIdentifier();
-        $aggregateIdentifier = $stream->getAggregateIdentifier();
         if ($newEvents === []) {
-            return $this->storage->getCurrentVersion($aggregateIdentifier);
+            return $this->storage->getCurrentVersion($streamName);
         }
 
-        $aggregateName = $stream->getAggregateName();
         $currentVersion = $stream->getVersion();
 
-        $version = $this->nextVersion($aggregateIdentifier, $currentVersion, $newEvents);
-        $this->storage->commit($streamIdentifier, $aggregateIdentifier, $aggregateName, $newEvents, $version);
+        $version = $this->nextVersion($streamName, $currentVersion, $newEvents);
+
+        $this->storage->commit($streamName, $newEvents, $version, $callback);
+
         $stream->markAllApplied($version);
 
         return $version;
@@ -90,16 +88,16 @@ class EventStore
      * if we detect conflict an exception is throwned the clear message to help the
      * user in the resolution of the message.
      *
-     * @param string $aggregateIdentifier
+     * @param string $streamName
      * @param integer $currentVersion
      * @param array $eventData
      * @return integer
      * @throws ConcurrencyException
      */
-    protected function nextVersion(string $aggregateIdentifier, int $currentVersion, array $eventData): int
+    protected function nextVersion(string $streamName, int $currentVersion, array $eventData): int
     {
         $eventCounter = count($eventData);
-        $currentStoredVersion = $this->storage->getCurrentVersion($aggregateIdentifier);
+        $currentStoredVersion = $this->storage->getCurrentVersion($streamName);
 
         if ($currentVersion !== $currentStoredVersion) {
             throw new ConcurrencyException(
@@ -114,11 +112,11 @@ class EventStore
     }
 
     /**
-     * @param string $identifier
+     * @param string $streamName
      * @return boolean
      */
-    public function contains(string $identifier): bool
+    public function contains(string $streamName): bool
     {
-        return $this->storage->contains($identifier);
+        return $this->storage->contains($streamName);
     }
 }

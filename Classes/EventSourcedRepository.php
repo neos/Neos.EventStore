@@ -20,7 +20,6 @@ use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\TypeHandling;
 
 /**
  * EventSourcedRepository
@@ -40,6 +39,19 @@ abstract class EventSourcedRepository implements RepositoryInterface
     protected $eventBus;
 
     /**
+     * @var string
+     */
+    protected $aggregateClassName;
+
+    /**
+     * Initializes a new Repository.
+     */
+    public function __construct()
+    {
+        $this->aggregateClassName = preg_replace(['/Repository$/'], [''], get_class($this));
+    }
+
+    /**
      * @param string $identifier
      * @return AggregateRootInterface
      * @throws AggregateRootNotFoundException
@@ -48,7 +60,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
     {
         try {
             /** @var EventStream $eventStream */
-            $eventStream = $this->eventStore->get($identifier);
+            $eventStream = $this->eventStore->get($this->generateStreamName($identifier));
         } catch (EventStreamNotFoundException $e) {
             throw new AggregateRootNotFoundException(sprintf(
                 "AggregateRoot with id '%s' not found", $identifier
@@ -56,7 +68,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
         }
 
         /** @var EventSourcedAggregateRootInterface $aggregateRoot */
-        $aggregateRoot = unserialize('O:' . strlen($eventStream->getAggregateName()) . ':"' . $eventStream->getAggregateName() . '":0:{};');
+        $aggregateRoot = unserialize('O:' . strlen($this->aggregateClassName) . ':"' . $this->aggregateClassName . '":0:{};');
         $aggregateRoot->reconstituteFromEventStream($eventStream);
         return $aggregateRoot;
     }
@@ -68,28 +80,22 @@ abstract class EventSourcedRepository implements RepositoryInterface
     public function save(AggregateRootInterface $aggregate)
     {
         try {
-            $stream = $this->eventStore
-                ->get($aggregate->getAggregateIdentifier());
+            $stream = $this->eventStore->get($this->generateStreamName($aggregate->getAggregateIdentifier()));
         } catch (EventStreamNotFoundException $e) {
-            $stream = new EventStream(
-                $aggregate->getAggregateIdentifier(),
-                TypeHandling::getTypeForValue($aggregate),
-                []
-            );
-        } finally {
-            $uncommitedEvents = $aggregate->pullUncommittedEvents();
-            $stream->addEvents(...$uncommitedEvents);
+            $stream = new EventStream();
         }
 
-        $version = $this->eventStore->commit($stream);
+        $uncommittedEvents = $aggregate->pullUncommittedEvents();
+        $stream->addEvents(...$uncommittedEvents);
 
-        /** @var EventTransport $eventTransport */
-        foreach ($uncommitedEvents as $eventTransport) {
-            // @todo metadata enrichment must be done in external service, with some middleware support
-            $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
-
-            $this->eventBus->handle($eventTransport);
-        }
+        $this->eventStore->commit($this->generateStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommittedEvents) {
+            /** @var EventTransport $eventTransport */
+            foreach ($uncommittedEvents as $eventTransport) {
+                // @todo metadata enrichment must be done in external service, with some middleware support
+                $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
+                $this->eventBus->handle($eventTransport);
+            }
+        });
     }
 
     /**
@@ -98,6 +104,17 @@ abstract class EventSourcedRepository implements RepositoryInterface
      */
     public function contains($identifier): bool
     {
-        return $this->eventStore->contains($identifier);
+        return $this->eventStore->contains($this->generateStreamName($identifier));
+    }
+
+    /**
+     * @param string $identifier
+     * @return string
+     * @todo find a more flexible way to generate stream name, need to be discussed
+     */
+    protected function generateStreamName(string $identifier)
+    {
+        $streamName = $this->aggregateClassName . '::' . $identifier;
+        return $streamName;
     }
 }

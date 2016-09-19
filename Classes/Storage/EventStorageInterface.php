@@ -20,31 +20,30 @@ use Neos\EventStore\Exception\StorageConcurrencyException;
 interface EventStorageInterface
 {
     /**
-     * @param string $identifier
+     * @param string $streamName
      * @return EventStreamData Aggregate Root events
      */
-    public function load(string $identifier);
+    public function load(string $streamName);
 
     /**
-     * @param string $streamIdentifier
-     * @param string $aggregateIdentifier
-     * @param string $aggregateName
+     * @param string $streamName
      * @param array $data
-     * @param integer $version
+     * @param integer $commitVersion
+     * @param \Closure $callback
      * @return void
      * @throws StorageConcurrencyException
      */
-    public function commit(string $streamIdentifier, string $aggregateIdentifier, string $aggregateName, array $data, int $version);
+    public function commit(string $streamName, array $data, int $commitVersion, \Closure $callback = null);
 
     /**
-     * @param string $identifier
+     * @param string $streamName
      * @return boolean
      */
-    public function contains(string $identifier): bool;
+    public function contains(string $streamName): bool;
 
     /**
-     * @param  string $identifier
+     * @param  string $streamName
      * @return integer Current Aggregate Root version
      */
-    public function getCurrentVersion(string $identifier): int;
+    public function getCurrentVersion(string $streamName): int;
 }
