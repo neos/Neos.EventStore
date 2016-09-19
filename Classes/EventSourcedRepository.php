@@ -80,17 +80,17 @@ abstract class EventSourcedRepository implements RepositoryInterface
     public function save(AggregateRootInterface $aggregate)
     {
         try {
-            $stream = $this->eventStore
-                ->get($this->generateStreamName($aggregate->getAggregateIdentifier()));
+            $stream = $this->eventStore->get($this->generateStreamName($aggregate->getAggregateIdentifier()));
         } catch (EventStreamNotFoundException $e) {
             $stream = new EventStream();
-        } finally {
-            $uncommitedEvents = $aggregate->pullUncommittedEvents();
-            $stream->addEvents(...$uncommitedEvents);
         }
-        $this->eventStore->commit($this->generateStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommitedEvents) {
+
+        $uncommittedEvents = $aggregate->pullUncommittedEvents();
+        $stream->addEvents(...$uncommittedEvents);
+
+        $this->eventStore->commit($this->generateStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommittedEvents) {
             /** @var EventTransport $eventTransport */
-            foreach ($uncommitedEvents as $eventTransport) {
+            foreach ($uncommittedEvents as $eventTransport) {
                 // @todo metadata enrichment must be done in external service, with some middleware support
                 $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
                 $this->eventBus->handle($eventTransport);
