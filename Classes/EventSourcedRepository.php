@@ -92,8 +92,8 @@ abstract class EventSourcedRepository implements RepositoryInterface
             /** @var EventTransport $eventTransport */
             foreach ($uncommittedEvents as $eventTransport) {
                 // @todo metadata enrichment must be done in external service, with some middleware support
-                $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
-                $this->eventBus->handle($eventTransport);
+                $versionedMetadata = $eventTransport->getMetadata()->withProperty(Metadata::VERSION, $version);
+                $this->eventBus->handle($eventTransport->withMetadata($versionedMetadata));
             }
         });
     }
