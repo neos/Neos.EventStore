@@ -11,7 +11,7 @@ namespace Neos\EventStore\Domain;
  * source code.
  */
 
-use Neos\Cqrs\Domain\AggregateRootTrait;
+use Neos\Cqrs\Domain\AbstractAggregateRoot;
 use Neos\Cqrs\Event\EventTransport;
 use Neos\Cqrs\RuntimeException;
 use Neos\EventStore\EventStream;
@@ -19,10 +19,8 @@ use Neos\EventStore\EventStream;
 /**
  * AggregateRootTrait
  */
-trait EventSourcedAggregateRootTrait
+abstract class AbstractEventSourcedAggregateRoot extends AbstractAggregateRoot implements EventSourcedAggregateRootInterface
 {
-    use AggregateRootTrait;
-
     /**
      * @param EventStream $stream
      * @throws RuntimeException
@@ -30,7 +28,7 @@ trait EventSourcedAggregateRootTrait
     public function reconstituteFromEventStream(EventStream $stream)
     {
         if ($this->events) {
-            throw new RuntimeException('AggregateRoot is already reconstituted from event stream.');
+            throw new RuntimeException(sprintf('%s has already been reconstituted from the event stream.', get_class($this)), 1474547708762);
         }
 
         /** @var EventTransport $eventTransport */

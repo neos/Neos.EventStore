@@ -62,13 +62,20 @@ abstract class EventSourcedRepository implements RepositoryInterface
             /** @var EventStream $eventStream */
             $eventStream = $this->eventStore->get($this->generateStreamName($identifier));
         } catch (EventStreamNotFoundException $e) {
-            throw new AggregateRootNotFoundException(sprintf(
-                "AggregateRoot with id '%s' not found", $identifier
-            ), 1471077948);
+            throw new AggregateRootNotFoundException(sprintf("The aggregate root '%s' with id '%s' could not found in the repository.", $this->aggregateClassName, $identifier), 1471077948);
         }
 
+        if (!class_exists($this->aggregateClassName)) {
+            throw new AggregateRootNotFoundException(sprintf("Could not reconstitute the aggregate root %s because its class '%s' does not exist.", $identifier, $this->aggregateClassName), 1474454928115);
+        }
+
+        $aggregateRootReflection = new \ReflectionClass($this->aggregateClassName);
         /** @var EventSourcedAggregateRootInterface $aggregateRoot */
-        $aggregateRoot = unserialize('O:' . strlen($this->aggregateClassName) . ':"' . $this->aggregateClassName . '":0:{};');
+        $aggregateRoot = $aggregateRootReflection->newInstanceWithoutConstructor();
+
+        if (!$aggregateRoot instanceof EventSourcedAggregateRootInterface) {
+            throw new AggregateRootNotFoundException(sprintf("Could not reconstitute the aggregate root '%s' with id '%s' because it does not implement the EventSourcedAggregateRootInterface.", $this->aggregateClassName, $identifier, $this->aggregateClassName), 1474464335530);
+        }
         $aggregateRoot->reconstituteFromEventStream($eventStream);
         return $aggregateRoot;
     }
