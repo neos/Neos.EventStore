@@ -107,15 +107,6 @@ abstract class EventSourcedRepository implements RepositoryInterface
 
     /**
      * @param string $identifier
-     * @return boolean
-     */
-    public function contains($identifier): bool
-    {
-        return $this->eventStore->contains($this->generateStreamName($identifier));
-    }
-
-    /**
-     * @param string $identifier
      * @return string
      * @todo find a more flexible way to generate stream name, need to be discussed
      */
