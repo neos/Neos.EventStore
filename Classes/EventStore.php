@@ -13,6 +13,7 @@ namespace Neos\EventStore;
 
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
+use Neos\EventStore\Filter\EventStreamFilter;
 use Neos\EventStore\Storage\EventStorageInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -36,14 +37,14 @@ class EventStore
 
     /**
      * Get events for AR
-     * @param string $streamName
+     * @param EventStreamFilter $filter
      * @return EventStream Can be empty stream
      * @throws EventStreamNotFoundException
      */
-    public function get(string $streamName): EventStream
+    public function get(EventStreamFilter $filter): EventStream
     {
         /** @var EventStreamData $streamData */
-        $streamData = $this->storage->load($streamName);
+        $streamData = $this->storage->load($filter);
 
         if (!$streamData || (!$streamData instanceof EventStreamData)) {
             throw new EventStreamNotFoundException();

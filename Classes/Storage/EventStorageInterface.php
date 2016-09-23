@@ -12,7 +12,9 @@ namespace Neos\EventStore\Storage;
  */
 
 use Neos\EventStore\EventStreamData;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Exception\StorageConcurrencyException;
+use Neos\EventStore\Filter\EventStreamFilter;
 
 /**
  * EventStorageInterface
@@ -20,10 +22,10 @@ use Neos\EventStore\Exception\StorageConcurrencyException;
 interface EventStorageInterface
 {
     /**
-     * @param string $streamName
+     * @param EventStreamFilter $filter
      * @return EventStreamData Aggregate Root events
      */
-    public function load(string $streamName);
+    public function load(EventStreamFilter $filter);
 
     /**
      * @param string $streamName
@@ -31,7 +33,7 @@ interface EventStorageInterface
      * @param integer $expectedVersion
      * @param \Closure $callback
      * @return void
-     * @throws StorageConcurrencyException
+     * @throws ConcurrencyException
      */
     public function commit(string $streamName, array $data, int $expectedVersion, \Closure $callback = null);
 
