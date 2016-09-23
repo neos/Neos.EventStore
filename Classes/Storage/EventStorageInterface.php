@@ -28,12 +28,12 @@ interface EventStorageInterface
     /**
      * @param string $streamName
      * @param array $data
-     * @param integer $commitVersion
+     * @param integer $expectedVersion
      * @param \Closure $callback
      * @return void
      * @throws StorageConcurrencyException
      */
-    public function commit(string $streamName, array $data, int $commitVersion, \Closure $callback = null);
+    public function commit(string $streamName, array $data, int $expectedVersion, \Closure $callback = null);
 
     /**
      * @param string $streamName

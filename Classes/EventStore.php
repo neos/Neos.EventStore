@@ -71,44 +71,11 @@ class EventStore
         }
 
         $currentVersion = $stream->getVersion();
+        $expectedVersion = $currentVersion + count($newEvents);
+        $this->storage->commit($streamName, $newEvents, $expectedVersion, $callback);
+        $stream->markAllApplied($expectedVersion);
 
-        $version = $this->nextVersion($streamName, $currentVersion, $newEvents);
-
-        $this->storage->commit($streamName, $newEvents, $version, $callback);
-
-        $stream->markAllApplied($version);
-
-        return $version;
-    }
-
-    /**
-     * Generate the next version for the current commit
-     *
-     * By default the next version is the current version + the number of new events,
-     * if we detect conflict an exception is throwned the clear message to help the
-     * user in the resolution of the message.
-     *
-     * @param string $streamName
-     * @param integer $currentVersion
-     * @param array $eventData
-     * @return integer
-     * @throws ConcurrencyException
-     */
-    protected function nextVersion(string $streamName, int $currentVersion, array $eventData): int
-    {
-        $eventCounter = count($eventData);
-        $currentStoredVersion = $this->storage->getCurrentVersion($streamName);
-
-        if ($currentVersion !== $currentStoredVersion) {
-            throw new ConcurrencyException(
-                vsprintf(
-                    'Aggregate root versions mismatch, current stored version: %d, current version: %d',
-                    [$currentStoredVersion, $currentVersion]
-                ), [], 1472221044
-            );
-        }
-
-        return $currentVersion + $eventCounter;
+        return $expectedVersion;
     }
 
     /**
