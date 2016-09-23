@@ -56,13 +56,13 @@ abstract class EventSourcedRepository implements RepositoryInterface
      * @return AggregateRootInterface
      * @throws AggregateRootNotFoundException
      */
-    public function findByIdentifier($identifier): AggregateRootInterface
+    public function findByIdentifier($identifier)
     {
         try {
             /** @var EventStream $eventStream */
             $eventStream = $this->eventStore->get($this->generateStreamName($identifier));
         } catch (EventStreamNotFoundException $e) {
-            throw new AggregateRootNotFoundException(sprintf("The aggregate root '%s' with id '%s' could not found in the repository.", $this->aggregateClassName, $identifier), 1471077948);
+            return null;
         }
 
         if (!class_exists($this->aggregateClassName)) {
