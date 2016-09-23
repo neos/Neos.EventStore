@@ -25,7 +25,7 @@ class AggregateEventStreamFilter extends EventStreamFilter
     public function __construct(string $aggregateName, string $aggregateIdentifier)
     {
         $this->boundedContext = $this->generatePackageKey();
-        $this->aggregateName = $aggregateName = substr($aggregateName, strrpos($aggregateName, '\\') + 1);;
+        $this->aggregateName = $aggregateName = substr($aggregateName, strrpos($aggregateName, '\\') + 1);
         $this->aggregateIdentifier = $aggregateIdentifier;
     }
 
