@@ -20,6 +20,8 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
  * EventStore
+ *
+ * @Flow\Scope("singleton")
  */
 class EventStore
 {
