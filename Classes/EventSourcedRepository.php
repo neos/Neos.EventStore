@@ -14,10 +14,8 @@ namespace Neos\EventStore;
 use Neos\Cqrs\Domain\AggregateRootInterface;
 use Neos\Cqrs\Domain\Exception\AggregateRootNotFoundException;
 use Neos\Cqrs\Domain\RepositoryInterface;
-use Neos\Cqrs\Event\EventBus;
-use Neos\Cqrs\Event\EventTransport;
+use Neos\Cqrs\Event\EventHandlingService;
 use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
-use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
 use Neos\EventStore\Filter\EventStreamFilter;
 use TYPO3\Flow\Annotations as Flow;
@@ -34,10 +32,10 @@ abstract class EventSourcedRepository implements RepositoryInterface
     protected $eventStore;
 
     /**
-     * @var EventBus
+     * @var EventHandlingService
      * @Flow\Inject
      */
-    protected $eventBus;
+    protected $eventHandlingService;
 
     /**
      * @var string
@@ -103,14 +101,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
         $uncommittedEvents = $aggregate->pullUncommittedEvents();
         $stream->addEvents(...$uncommittedEvents);
 
-        $this->eventStore->commit($this->getStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommittedEvents) {
-            /** @var EventTransport $eventTransport */
-            foreach ($uncommittedEvents as $eventTransport) {
-                // @todo metadata enrichment must be done in external service, with some middleware support
-                $eventTransport->getMetaData()->add(Metadata::VERSION, $version);
-                $this->eventBus->handle($eventTransport);
-            }
-        });
+        $this->eventHandlingService->publish($this->getStreamName($aggregate->getAggregateIdentifier()), $stream);
     }
 
     /**

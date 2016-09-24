@@ -62,10 +62,10 @@ class EventStore
      * @param string $streamName
      * @param EventStream $stream
      * @return int commited version number
-     * @param \Closure $callback
+     * @param \Closure $callbackWithinTransaction execute the callback within a transaction in the store
      * @throws ConcurrencyException
      */
-    public function commit(string $streamName, EventStream $stream, \Closure $callback = null) :int
+    public function commit(string $streamName, EventStream $stream, \Closure $callbackWithinTransaction = null) :int
     {
         $newEvents = $stream->getNewEvents();
 
@@ -75,7 +75,7 @@ class EventStore
 
         $currentVersion = $stream->getVersion();
         $expectedVersion = $currentVersion + count($newEvents);
-        $this->storage->commit($streamName, $newEvents, $expectedVersion, $callback);
+        $this->storage->commit($streamName, $newEvents, $expectedVersion, $callbackWithinTransaction);
         $stream->markAllApplied($expectedVersion);
 
         return $expectedVersion;
