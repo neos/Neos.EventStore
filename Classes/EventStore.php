@@ -77,13 +77,4 @@ class EventStore
 
         return $expectedVersion;
     }
-
-    /**
-     * @param string $streamName
-     * @return boolean
-     */
-    public function contains(string $streamName): bool
-    {
-        return $this->storage->contains($streamName);
-    }
 }

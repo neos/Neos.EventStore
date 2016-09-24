@@ -36,12 +36,6 @@ interface EventStorageInterface
     public function commit(string $streamName, array $data, int $expectedVersion, \Closure $callback = null);
 
     /**
-     * @param string $streamName
-     * @return boolean
-     */
-    public function contains(string $streamName): bool;
-
-    /**
      * @param  string $streamName
      * @return integer Current Aggregate Root version
      */
