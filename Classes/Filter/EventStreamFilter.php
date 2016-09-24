@@ -11,7 +11,6 @@ namespace Neos\EventStore\Filter;
  * source code.
  */
 
-use Neos\EventStore\Stream\AbstractStreamName;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -63,6 +62,14 @@ class EventStreamFilter
      * @var string[]
      */
     public $eventTypes = null;
+
+    /**
+     * @return EventStreamFilter
+     */
+    public static function create()
+    {
+        return new EventStreamFilter();
+    }
 
     /**
      * @return int
@@ -141,13 +148,7 @@ class EventStreamFilter
      */
     public function getStreamName()
     {
-        if ($this->streamName) {
-            return $this->streamName;
-        }
-        if ($this->boundedContext === null || $this->aggregateName === null || $this->aggregateIdentifier === null) {
-            return null;
-        }
-        return sprintf(AbstractStreamName::PATTERN, $this->boundedContext, $this->aggregateName, $this->aggregateIdentifier);
+        return $this->streamName;
     }
 
     /**

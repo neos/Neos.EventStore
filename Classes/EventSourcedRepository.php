@@ -19,10 +19,7 @@ use Neos\Cqrs\Event\EventTransport;
 use Neos\EventStore\Domain\EventSourcedAggregateRootInterface;
 use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
-use Neos\EventStore\Filter\AggregateEventStreamFilter;
 use Neos\EventStore\Filter\EventStreamFilter;
-use Neos\EventStore\Stream\AbstractStreamName;
-use Neos\EventStore\Stream\AggregateStreamName;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -48,6 +45,11 @@ abstract class EventSourcedRepository implements RepositoryInterface
     protected $aggregateClassName;
 
     /**
+     * @var string
+     */
+    protected $streamNamePrefix;
+
+    /**
      * Initializes a new Repository.
      */
     public function __construct()
@@ -64,7 +66,9 @@ abstract class EventSourcedRepository implements RepositoryInterface
     {
         try {
             /** @var EventStream $eventStream */
-            $eventStream = $this->eventStore->get($this->filterByIdentifier($identifier));
+            $filter = EventStreamFilter::create()
+                ->setStreamName($this->getStreamName($identifier));
+            $eventStream = $this->eventStore->get($filter);
         } catch (EventStreamNotFoundException $e) {
             return null;
         }
@@ -89,7 +93,9 @@ abstract class EventSourcedRepository implements RepositoryInterface
     public function save(AggregateRootInterface $aggregate)
     {
         try {
-            $stream = $this->eventStore->get($this->filterByIdentifier($aggregate->getAggregateIdentifier()));
+            $filter = EventStreamFilter::create()
+                ->setStreamName($this->getStreamName($aggregate->getAggregateIdentifier()));
+            $stream = $this->eventStore->get($filter);
         } catch (EventStreamNotFoundException $e) {
             $stream = new EventStream();
         }
@@ -97,7 +103,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
         $uncommittedEvents = $aggregate->pullUncommittedEvents();
         $stream->addEvents(...$uncommittedEvents);
 
-        $this->eventStore->commit(AggregateStreamName::generate($aggregate), $stream, function ($version) use ($uncommittedEvents) {
+        $this->eventStore->commit($this->getStreamName($aggregate->getAggregateIdentifier()), $stream, function ($version) use ($uncommittedEvents) {
             /** @var EventTransport $eventTransport */
             foreach ($uncommittedEvents as $eventTransport) {
                 // @todo metadata enrichment must be done in external service, with some middleware support
@@ -109,11 +115,15 @@ abstract class EventSourcedRepository implements RepositoryInterface
 
     /**
      * @param string $identifier
-     * @return AggregateEventStreamFilter
-     * @todo find a more flexible way to generate stream name, need to be discussed
+     * @return string
      */
-    protected function filterByIdentifier($identifier)
+    protected function getStreamName($identifier)
     {
-        return new AggregateEventStreamFilter($this->aggregateClassName, $identifier);
+        if ($this->streamNamePrefix === null) {
+            list($vendor, $package) = explode('\\', $this->aggregateClassName);
+            $aggregateName = substr($this->aggregateClassName, strrpos($this->aggregateClassName, '\\') + 1);
+            $this->streamNamePrefix = $vendor . ':' . $package . ':' . $aggregateName;
+        }
+        return $this->streamNamePrefix . ':' . $identifier;
     }
 }
