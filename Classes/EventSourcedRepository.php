@@ -21,6 +21,7 @@ use Neos\EventStore\Event\Metadata;
 use Neos\EventStore\Exception\EventStreamNotFoundException;
 use Neos\EventStore\Filter\AggregateEventStreamFilter;
 use Neos\EventStore\Filter\EventStreamFilter;
+use Neos\EventStore\Stream\AbstractStreamName;
 use Neos\EventStore\Stream\AggregateStreamName;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -72,9 +73,7 @@ abstract class EventSourcedRepository implements RepositoryInterface
             throw new AggregateRootNotFoundException(sprintf("Could not reconstitute the aggregate root %s because its class '%s' does not exist.", $identifier, $this->aggregateClassName), 1474454928115);
         }
 
-        $aggregateRootReflection = new \ReflectionClass($this->aggregateClassName);
-        /** @var EventSourcedAggregateRootInterface $aggregateRoot */
-        $aggregateRoot = $aggregateRootReflection->newInstanceWithoutConstructor();
+        $aggregateRoot = unserialize('O:' . strlen($this->aggregateClassName) . ':"' . $this->aggregateClassName . '":0:{};');
 
         if (!$aggregateRoot instanceof EventSourcedAggregateRootInterface) {
             throw new AggregateRootNotFoundException(sprintf("Could not reconstitute the aggregate root '%s' with id '%s' because it does not implement the EventSourcedAggregateRootInterface.", $this->aggregateClassName, $identifier, $this->aggregateClassName), 1474464335530);
@@ -109,8 +108,9 @@ abstract class EventSourcedRepository implements RepositoryInterface
     }
 
     /**
-     * @param $identifier
-     * @return EventStreamFilter
+     * @param string $identifier
+     * @return AggregateEventStreamFilter
+     * @todo find a more flexible way to generate stream name, need to be discussed
      */
     protected function filterByIdentifier($identifier)
     {
