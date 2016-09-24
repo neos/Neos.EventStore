@@ -36,16 +36,17 @@ class JsonSerializer
     }
 
     /**
-     * @param string $serializedMessage
-     * @return mixed
+     * @param string $payload
+     * @param string $type
+     * @return object
      */
-    public function unserialize($serializedMessage)
+    public function unserialize(string $payload, string $type)
     {
-        if (is_string($serializedMessage) === false) {
+        if (is_string($payload) === false) {
             throw new \InvalidArgumentException('The JsonSerializer can only unserialize strings.', 1427369767);
         }
         return $this->arraySerializer->unserialize(
-            json_decode($serializedMessage, true)
+            json_decode($payload, true), $type
         );
     }
 }

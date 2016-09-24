@@ -27,32 +27,24 @@ class ArraySerializer
      */
     public function serialize($object)
     {
-        $type = str_replace('\\', '.', TypeHandling::getTypeForValue($object));
         $data = ObjectAccess::getGettableProperties($object);
-        return Arrays::arrayMergeRecursiveOverrule([
-            '__type' => $type,
-        ], $data);
+        return $data;
     }
 
     /**
-     * @param array $serializedObject
-     * @return mixed
+     * @param array $payload
+     * @param string $type
+     * @return object
      */
-    public function unserialize($serializedObject)
+    public function unserialize(array $payload, string $type)
     {
-        if (is_array($serializedObject) === false) {
+        if (is_array($payload) === false) {
             throw new \InvalidArgumentException('The ArraySerializer can only unserialize arrays.', 1427369045);
         }
-        if (array_key_exists('__type', $serializedObject) === false) {
-            throw new \InvalidArgumentException('The serialized object is corrupted.', 1427369459);
-        }
-        $type = str_replace('.', '\\', $serializedObject['__type']);
         if (class_exists($type) === false) {
             throw new \InvalidArgumentException('Unserialization for object of type "' . $type . '" failed. No such class.', 1427369534);
         }
         $object = unserialize('O:' . strlen($type) . ':"' . $type . '":0:{};');
-        $payload = $serializedObject;
-        unset($payload['__type']);
         foreach ($payload as $propertyName => $propertyValue) {
             if (is_array($propertyValue) &&
                 count($propertyValue) === 3 &&
