@@ -15,9 +15,10 @@ use Neos\Cqrs\Domain\AbstractAggregateRoot;
 use Neos\Cqrs\Event\EventTransport;
 use Neos\Cqrs\RuntimeException;
 use Neos\EventStore\EventStream;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * AggregateRootTrait
+ * Base class for an event sourced aggregate root
  */
 abstract class AbstractEventSourcedAggregateRoot extends AbstractAggregateRoot implements EventSourcedAggregateRootInterface
 {
