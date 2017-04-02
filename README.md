@@ -4,7 +4,7 @@ _This package is currently under development and not fully working, please don't
 
 Check for more documentation:
  
-- [Neos.Cqrs](https://github.com/neos/Neos.Cqrs)
+- [Neos.EventSourcing](https://github.com/neos/Neos.EventSourcing)
 
 ## EventStore Implementations
 
